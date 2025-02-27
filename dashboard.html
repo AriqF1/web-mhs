@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="h-screen bg-gray-200">
+    <div class="flex h-screen">
+        <!--Sidebar Menu-->
+            <div id="sidebar-container"></div>
+        <!--End Sidebar Menu-->
+        <div class="flex flex-col flex-1">
+            <!--Header-->
+            <div id="header-container"></div>
+            <!--End Header-->
+            <main class="flex-1 p-6 overflow-auto">
+                <div class="bg-white shadow rounded-lg p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-lg font-semibold">Daftar Mahasiswa</h2>
+                        <button onclick="openModal('addModal')" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                            + Tambah Mahasiswa
+                        </button>
+                    </div>
+                    <table class="w-full text-sm text-gray-700">
+                        <thead>
+                            <tr class="bg-blue-600 text-white">
+                                <th class="px-2 py-4 text-left">NIM</th>
+                                <th class="px-2 py-4 text-left">Nama</th>
+                                <th class="px-2 py-4 text-center">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="even:bg-gray-100 odd:bg-white">
+                                <td class="px-2 py-4">2021001</td>
+                                <td class="px-2 py-4">Andi</td>
+                                <td class="px-2 py-4 text-center">
+                                    <button onclick="openModal('editModal')" class="bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-600">Edit</button>
+                                    <button onclick="deleteMahasiswa(this)" class="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600">Hapus</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </main>
+            <div id="footer-container"></div>
+        </div>
+    </div>
+    <!--Modal-->
+    <div id="add-modal"></div>
+    <div id="edit-modal"></div>
+    <script src="assets/script.js"></script>
+</body>
+</html>
