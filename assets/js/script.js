@@ -11,6 +11,14 @@ function handleLogin(event){
         alert("Login berhasil");
 }
 
+function openModal(modalId) {
+    document.getElementById(modalId).classList.remove("hidden");
+}
+
+function closeModal(modalId) {
+    document.getElementById(modalId).classList.add("hidden");
+}
+
 function handleForm(event, actionType) {
     event.preventDefault();
 
@@ -22,6 +30,7 @@ function handleForm(event, actionType) {
         return;
     }
     alert(`Mahasiswa berhasil ${actionType}`);
+    
 }
 
 
@@ -45,15 +54,3 @@ document.addEventListener("DOMContentLoaded", async function () {
     loadComponent("add-modal", "assets/addModal.html");
     loadComponent("edit-modal", "assets/editModal.html");
 });
-
-function openModal(modalId) {
-    document.getElementById(modalId).classList.remove("hidden");
-}
-
-function closeModal(modalId) {
-    document.getElementById(modalId).classList.add("hidden");
-}
-
-function ubahTeksModal(teksBaru) {
-    document.getElementById("judul-modal").textContent = teksBaru;
-}
