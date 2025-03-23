@@ -1,5 +1,6 @@
 import React from 'react';
 import Input from './Pages/Auth/Components/Input';
+import Button from './Pages/Auth/Components/Button';
 
 const App = () => { 
    return <div className="h-screen bg-gray-200 flex items-center justify-center">
@@ -27,9 +28,7 @@ const App = () => {
                         </label>
                         <a href="#" className="text-sm text-blue-500 hover:underline">Lupa Password</a>
                     </div>
-                    <button type="submit" className="w-full py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
-                        Login
-                    </button>
+                    <Button>Login</Button>
                 </form>
                 <p className="text-sm text-center text-gray-600 mt-4">
                     Belum Punya Akun?<a href="#" className="text-blue-500 hover:underline"> Daftar</a>
