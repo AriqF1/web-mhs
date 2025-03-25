@@ -3,12 +3,12 @@ import { useState } from "react";
 import Button from "./Components/Button";
 import Input from "./Components/Input";
 import Label from "./Components/Label";
+import { users } from "../../dummyData";
+import { useNavigate } from "react-router-dom";
 
 const LoginPage = () => {
-    const [formData, setFormData] = useState({
-        email: "",
-        password: "",
-    });
+    const [formData, setFormData] = useState({ email: "", password: "",});
+    const navigate = useNavigate();
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -16,14 +16,20 @@ const LoginPage = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log(formData);
+        const user = users.find(u => u.email === formData.email && u.password === formData.password);
+        if (user) {
+          localStorage.setItem("user", JSON.stringify(user));
+          navigate("/admin/dashboard");
+        } else {
+          alert("Username atau Password salah!");
+        }
     };
 
     return (
         <div className="h-screen bg-gray-200 flex items-center justify-center">
             <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8">
                     <h2 className="text-3xl font-semibold text-center text-blue-600 mb-6">Login</h2>
-                        <form className="space-y-4" onSubmit={(e) => handleSubmit}>
+                        <form className="space-y-4" onSubmit={handleSubmit}>
                             <div>
                                 <Label htmlFor="email" children={<span>Email</span>}/> 
                                 <Input
@@ -31,7 +37,7 @@ const LoginPage = () => {
                                 name="email"
                                 placeholder="Masukkan Email"
                                 value = {formData.email}
-                                onChange={(e) => handleChange}/>
+                                onChange={handleChange} />
                             </div>
                             <div>
                                 <Label htmlFor="password" children={<span>Password</span>}/>
@@ -40,7 +46,7 @@ const LoginPage = () => {
                                 name="password"
                                 placeholder="Masukkan Password"
                                 value={formData.password}
-                                onChange={(e) => handleChange}/>
+                                onChange={handleChange} />
                             </div>
                             <div className="flex justify-between items-center">
                                 <label className="flex-item-center">
