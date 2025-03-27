@@ -8,7 +8,7 @@ const AppRoutes = () => {
     <Router>
       <Routes>
         {/* Halaman Login */}
-        <Route path="/login" element={<LoginPage />} />
+        <Route path="/" element={<LoginPage />} />
 
         {/* Halaman Admin dengan Proteksi */}
         <Route path="/admin" element={<ProtectedRoute />}>

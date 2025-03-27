@@ -4,7 +4,7 @@ import Button from "./Components/Button";
 import Input from "./Components/Input";
 import Label from "./Components/Label";
 import { users } from "../../dummyData";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";;
 
 const LoginPage = () => {
     const [formData, setFormData] = useState({ email: "", password: "",});
@@ -17,13 +17,17 @@ const LoginPage = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         const user = users.find(u => u.email === formData.email && u.password === formData.password);
+        
         if (user) {
-          localStorage.setItem("user", JSON.stringify(user));
-          navigate("/admin/dashboard");
+            console.log("Login berhasil:", user);
+            localStorage.setItem("user", JSON.stringify(user));
+            navigate("/admin/dashboard");
         } else {
-          alert("Username atau Password salah!");
+            console.log("Login gagal: Email atau password salah.");
+            alert("Username atau Password salah!");
         }
     };
+    
 
     return (
         <div className="h-screen bg-gray-200 flex items-center justify-center">
