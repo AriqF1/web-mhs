@@ -8,8 +8,9 @@ const Sidebar = () => {
                 <span className="text-3xl font-bold hidden lg:block">Admin</span>
             </div>
             <nav className="p-4 space-y-2">
+                {/* Dashboard */}
                 <NavLink 
-                    to="/admin/dashboard" 
+                    to="/admin/dashboard/mahasiswa" 
                     className={({ isActive }) => 
                         `flex items-center space-x-2 px-4 py-2 rounded ${isActive ? "bg-blue-700" : "hover:bg-blue-700"}`
                     }
@@ -18,14 +19,15 @@ const Sidebar = () => {
                     <span className="menu-text hidden lg:inline">Dashboard</span>
                 </NavLink>
 
+                {/* Daftar Mahasiswa */}
                 <NavLink 
-                    to="/admin/mahasiswa" 
+                    to="/admin/dashboard/detail" 
                     className={({ isActive }) => 
                         `flex items-center space-x-2 px-4 py-2 rounded ${isActive ? "bg-blue-700" : "hover:bg-blue-700"}`
                     }
                 >
                     <span className="text-lg">🎓</span>
-                    <span className="menu-text hidden lg:inline">Mahasiswa</span>
+                    <span className="menu-text hidden lg:inline">Daftar Mahasiswa</span>
                 </NavLink>
             </nav>
         </aside>
