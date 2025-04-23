@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Modal from "../Auth/Components/Modal";
 import { FaEdit, FaTrash, FaSearch, FaUserPlus, FaEye } from "react-icons/fa";
 import ListMahasiswaData from "../../data/ListMahasiswa.jsx";
+import MahasiswaForm from "../Auth/Components/MahasiswaForm.jsx";
 
 const DaftarMahasiswa = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -31,151 +32,6 @@ const DaftarMahasiswa = () => {
 
   // Ekstrak jurusan unik untuk dropdown filter
   const uniqueJurusan = [...new Set(ListMahasiswa.map((mhs) => mhs.jurusan))];
-
-  // Form tambah mahasiswa
-  const AddMahasiswaForm = ({
-    uniqueJurusan,
-    ListMahasiswa,
-    setIsModalOpen,
-    setListMahasiswa,
-  }) => {
-    const [newMahasiswa, setNewMahasiswa] = useState({
-      nim: "",
-      nama: "",
-      email: "",
-      jurusan: "",
-      angkatan: "",
-      status: "Aktif",
-    });
-
-    // Handle input changes
-    const handleInputChange = (e) => {
-      const { name, value } = e.target;
-      setNewMahasiswa({
-        ...newMahasiswa,
-        [name]: value,
-      });
-    };
-
-    // Handle form submission
-    const handleSubmit = (e) => {
-      e.preventDefault();
-      const newMahasiswaData = { ...newMahasiswa };
-
-      // Tambahkan mahasiswa baru ke daftar
-      setListMahasiswa((prevList) => [...prevList, newMahasiswaData]);
-
-      // Reset form
-      setNewMahasiswa({
-        nim: "",
-        nama: "",
-        email: "",
-        jurusan: "",
-        angkatan: "",
-        status: "Aktif",
-      });
-
-      // Tutup modal
-      setIsModalOpen(false);
-    };
-
-    return (
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700">NIM</label>
-          <input
-            type="text"
-            name="nim"
-            value={newMahasiswa.nim}
-            onChange={handleInputChange}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Nama Lengkap
-          </label>
-          <input
-            type="text"
-            name="nama"
-            value={newMahasiswa.nama}
-            onChange={handleInputChange}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Email
-          </label>
-          <input
-            type="email"
-            name="email"
-            value={newMahasiswa.email}
-            onChange={handleInputChange}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Jurusan
-          </label>
-          <select
-            name="jurusan"
-            value={newMahasiswa.jurusan}
-            onChange={handleInputChange}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-          >
-            <option value="">Pilih Jurusan</option>
-            {uniqueJurusan.map((jurusan) => (
-              <option key={jurusan} value={jurusan}>
-                {jurusan}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Status
-          </label>
-          <select
-            name="status"
-            value={newMahasiswa.status}
-            onChange={handleInputChange}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-          >
-            <option value="Aktif">Aktif</option>
-            <option value="Cuti">Cuti</option>
-            <option value="Tidak Aktif">Tidak Aktif</option>
-          </select>
-        </div>
-        <div className="flex justify-end pt-4">
-          <button
-            type="button"
-            onClick={() => {
-              setNewMahasiswa({
-                nim: "",
-                nama: "",
-                email: "",
-                jurusan: "",
-                angkatan: "",
-                status: "Aktif",
-              });
-              setIsModalOpen(false);
-            }}
-            className="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400 mr-2"
-          >
-            Batal
-          </button>
-          <button
-            type="submit"
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-          >
-            Simpan
-          </button>
-        </div>
-      </form>
-    );
-  };
 
   // Render detail mahasiswa
   const DetailMahasiswa = ({ mhs }) => (
@@ -266,10 +122,12 @@ const DaftarMahasiswa = () => {
               onClick={() =>
                 openModal(
                   "Tambah Mahasiswa",
-                  <AddMahasiswaForm
+                  <MahasiswaForm
                     uniqueJurusan={uniqueJurusan}
-                    ListMahasiswa={ListMahasiswa}
-                    setListMahasiswa={setListMahasiswa}
+                    onSubmit={(data) =>
+                      setListMahasiswa([...ListMahasiswa, data])
+                    }
+                    onCancel={() => setIsModalOpen(false)}
                   />
                 )
               }
@@ -344,7 +202,28 @@ const DaftarMahasiswa = () => {
                       </button>
                       <button
                         onClick={() =>
-                          openModal("Edit Mahasiswa", <AddMahasiswaForm />)
+                          openModal(
+                            "Edit Mahasiswa",
+                            <MahasiswaForm
+                              initialData={mhs}
+                              uniqueJurusan={uniqueJurusan}
+                              onSubmit={(data) => {
+                                setListMahasiswa((prev) =>
+                                  prev.map((m) =>
+                                    m.nim === data.nim ? data : m
+                                  )
+                                );
+                                closeModal();
+                              }}
+                              onDelete={(nim) => {
+                                setListMahasiswa((prev) =>
+                                  prev.filter((m) => m.nim !== nim)
+                                );
+                                closeModal();
+                              }}
+                              onCancel={setIsModalOpen(false)}
+                            />
+                          )
                         }
                         className="text-yellow-600 hover:text-yellow-900 mr-3"
                       >
