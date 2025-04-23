@@ -23,7 +23,7 @@ export default function Header() {
                 Frimawan
               </span>
               <img
-                src="/api/placeholder/40/40"
+                src="https://i.pravatar.cc/150?img=6"
                 className="w-10 h-10 rounded-full border-2 border-gray-200 group-hover:border-blue-500"
                 alt="Profile"
               />
