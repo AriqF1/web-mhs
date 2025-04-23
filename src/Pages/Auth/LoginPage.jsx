@@ -4,70 +4,128 @@ import Button from "./Components/Button";
 import Input from "./Components/Input";
 import Label from "./Components/Label";
 import { users } from "../../dummyData";
-import { useNavigate } from "react-router-dom";;
+import { useNavigate } from "react-router-dom";
 
 const LoginPage = () => {
-    const [formData, setFormData] = useState({ email: "", password: "",});
-    const navigate = useNavigate();
+  const [formData, setFormData] = useState({ email: "", password: "" });
+  const navigate = useNavigate();
 
-    const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
-    };
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        const user = users.find(u => u.email === formData.email && u.password === formData.password);
-        
-        if (user) {
-            console.log("Login berhasil:", user);
-            localStorage.setItem("user", JSON.stringify(user));
-            navigate("/admin/dashboard");
-        } else {
-            console.log("Login gagal: Email atau password salah.");
-            alert("Username atau Password salah!");
-        }
-    };
-    
-
-    return (
-        <div className="h-screen bg-gray-200 flex items-center justify-center">
-            <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8">
-                    <h2 className="text-3xl font-semibold text-center text-blue-600 mb-6">Login</h2>
-                        <form className="space-y-4" onSubmit={handleSubmit}>
-                            <div>
-                                <Label htmlFor="email" children={<span>Email</span>}/> 
-                                <Input
-                                type="email"
-                                name="email"
-                                placeholder="Masukkan Email"
-                                value = {formData.email}
-                                onChange={handleChange} />
-                            </div>
-                            <div>
-                                <Label htmlFor="password" children={<span>Password</span>}/>
-                                <Input
-                                type="password"
-                                name="password"
-                                placeholder="Masukkan Password"
-                                value={formData.password}
-                                onChange={handleChange} />
-                            </div>
-                            <div className="flex justify-between items-center">
-                                <label className="flex-item-center">
-                                    <input type="checkbox" className="mr-2"/>
-                                    <span className="text-sm text-gray-600">Ingat Saya</span>
-                                </label>
-                                <a href="#" className="text-sm text-blue-500 hover:underline">Lupa Password</a>
-                            </div>
-                            <Button>Login</Button>
-                        </form>
-                        <p className="text-sm text-center text-gray-600 mt-4">
-                            Belum Punya Akun?<a href="#" className="text-blue-500 hover:underline"> Daftar</a>
-                        </p>
-                </div>
-        </div>
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const user = users.find(
+      (u) => u.email === formData.email && u.password === formData.password
     );
 
+    if (user) {
+      console.log("Login berhasil:", user);
+      localStorage.setItem("user", JSON.stringify(user));
+      navigate("/admin/dashboard/index");
+    } else {
+      console.log("Login gagal: Email atau password salah.");
+      alert("Username atau Password salah!");
+    }
+  };
 
+  return (
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+      <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-lg">
+        <div className="text-center">
+          <h2 className="text-3xl font-bold text-gray-800">Login</h2>
+          <p className="mt-2 text-sm text-gray-600">Masuk ke dashboard Anda</p>
+        </div>
+
+        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+          <div className="space-y-4">
+            <div>
+              <Label
+                htmlFor="email"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Email
+              </Label>
+              <Input
+                id="email"
+                name="email"
+                type="email"
+                autoComplete="email"
+                required
+                className="w-full px-3 py-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Masukkan email Anda"
+                value={formData.email}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div>
+              <Label
+                htmlFor="password"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Password
+              </Label>
+              <Input
+                id="password"
+                name="password"
+                type="password"
+                autoComplete="current-password"
+                required
+                className="w-full px-3 py-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Masukkan password Anda"
+                value={formData.password}
+                onChange={handleChange}
+              />
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <input
+                id="remember-me"
+                name="remember-me"
+                type="checkbox"
+                className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+              />
+              <label
+                htmlFor="remember-me"
+                className="block ml-2 text-sm text-gray-700"
+              >
+                Ingat Saya
+              </label>
+            </div>
+
+            <div className="text-sm">
+              <a
+                href="#"
+                className="font-medium text-blue-600 hover:text-blue-500"
+              >
+                Lupa Password
+              </a>
+            </div>
+          </div>
+
+          <div>
+            <Button
+              type="submit"
+              className="w-full px-4 py-2.5 text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 cursor-pointer"
+            >
+              Login
+            </Button>
+          </div>
+        </form>
+
+        <div className="text-center text-sm text-gray-600">
+          Belum Punya Akun?{" "}
+          <a href="#" className="font-medium text-blue-600 hover:text-blue-500">
+            Daftar
+          </a>
+        </div>
+      </div>
+    </div>
+  );
 };
+
 export default LoginPage;
