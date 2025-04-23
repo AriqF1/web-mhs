@@ -3,7 +3,9 @@ import LoginPage from "./Pages/Auth/LoginPage";
 import Dashboard from "./Pages/Admin/Dashboard";
 import ProtectedRoute from "./ProtectedRoute";
 import DaftarMahasiswa from "./Pages/Admin/DaftarMahasiswa";
-import DetailMahasiswa from "./Pages/Admin/DetailMahasiswa";
+import DaftarProdi from "./Pages/Admin/DaftarProdi";
+import DashboardHome from "./Pages/Admin/DashboardHome";
+import DaftarDosen from "./Pages/Admin/DaftarDosen";
 
 const AppRoutes = () => {
   return (
@@ -16,8 +18,10 @@ const AppRoutes = () => {
         <Route path="/admin" element={<ProtectedRoute />}>
           {/* Dashboard sebagai Layout */}
           <Route path="dashboard" element={<Dashboard />}>
+            <Route path="index" element={<DashboardHome />} />
             <Route path="mahasiswa" element={<DaftarMahasiswa />} />
-            <Route path="detail" element={<DetailMahasiswa />} />
+            <Route path="detail" element={<DaftarProdi />} />
+            <Route path="dosen" element={<DaftarDosen />} />
           </Route>
         </Route>
 
