@@ -1,12 +1,42 @@
-# React + Vite
+# StudentHUB
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**StudentHUB** is a web application built with React JS designed to help students and lecturers manage courses, and interact with various dashboard features.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 📚 Features
 
-## Expanding the ESLint configuration
+- 🔐 **Login and Authentication**  
+  Secure login system that allows users (students and lecturers) to access the portal.
 
-If you are developing a production application, we recommend using TypeScript and enable type-aware lint rules. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- 📚 **Courses Page**  
+  A page dedicated to displaying and managing available courses.
+
+- 👩‍🏫 **Lecturers Page**  
+  A page that lists lecturers, their profiles, and associated courses.
+
+- 👨‍🎓 **Student Page**  
+   A page that lists student, their profiles, and detail.
+
+- 📊 **Dashboard with Interactive Widgets**  
+  A personalized dashboard displaying key metrics such as total courses, total lecturers, total students, using interactive widgets.
+
+---
+
+## 🛠️ Built With
+
+- **React JS** — A JavaScript library for building user interfaces.
+- **React Router** — For handling navigation between different pages of the application.
+- **Context API / Redux (if used)** — State management for user data, authentication status, and global states.
+- **Tailwind CSS** — For styling the application.
+
+---
+
+## 📦 Installation
+
+Follow these steps to get your project up and running locally:
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/your-username/web-mhs.git
+   cd web-mhs
