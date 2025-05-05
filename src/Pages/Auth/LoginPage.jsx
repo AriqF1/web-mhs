@@ -5,9 +5,12 @@ import Input from "./Components/Input";
 import Label from "./Components/Label";
 import { users } from "../../dummyData";
 import { useNavigate } from "react-router-dom";
+import { Eye, EyeOff } from "lucide-react";
+import { toast } from "react-toastify";
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -23,10 +26,11 @@ const LoginPage = () => {
     if (user) {
       console.log("Login berhasil:", user);
       localStorage.setItem("user", JSON.stringify(user));
+      toast.success("Login berhasil!");
       navigate("/admin/dashboard/index");
     } else {
       console.log("Login gagal: Email atau password salah.");
-      alert("Username atau Password salah!");
+      toast.error("Login gagal: Email atau password salah.");
     }
   };
 
@@ -59,8 +63,7 @@ const LoginPage = () => {
                 onChange={handleChange}
               />
             </div>
-
-            <div>
+            <div className="relative">
               <Label
                 htmlFor="password"
                 className="block text-sm font-medium text-gray-700"
@@ -70,7 +73,7 @@ const LoginPage = () => {
               <Input
                 id="password"
                 name="password"
-                type="password"
+                type={showPassword ? "text" : "password"}
                 autoComplete="current-password"
                 required
                 className="w-full px-3 py-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -78,6 +81,14 @@ const LoginPage = () => {
                 value={formData.password}
                 onChange={handleChange}
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-[35px] text-gray-500"
+                tabIndex={-1}
+              >
+                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
             </div>
           </div>
 
