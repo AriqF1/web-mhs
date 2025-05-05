@@ -1,11 +1,33 @@
 import React, { useState } from "react";
 import { FaUserCircle, FaSignOutAlt, FaCog } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 export default function Header() {
   const [showProfileMenu, setShowProfileMenu] = useState(false);
 
   const toggleProfileMenu = () => {
     setShowProfileMenu(!showProfileMenu);
+  };
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    Swal.fire({
+      title: "Logout",
+      text: "Apakah Anda yakin ingin keluar?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Ya, keluar",
+      cancelButtonText: "Batal",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        navigate("/"); // Redirect ke halaman login
+      } else {
+        Swal.fire("Dibatalkan", "Anda tetap berada di dashboard", "info");
+      }
+    });
   };
 
   return (
@@ -51,13 +73,13 @@ export default function Header() {
                   Pengaturan
                 </a>
                 <div className="border-t border-gray-100 mt-2"></div>
-                <a
-                  href="#logout"
-                  className="flex items-center px-4 py-2 text-red-600 hover:bg-red-50"
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center w-full px-4 py-2 text-gray-700 hover:bg-blue-50 text-left"
                 >
-                  <FaSignOutAlt className="mr-3" />
-                  Logout
-                </a>
+                  <FaSignOutAlt className="mr-3 text-gray-500" />
+                  Keluar
+                </button>
               </div>
             )}
           </div>
