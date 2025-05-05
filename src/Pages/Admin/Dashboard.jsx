@@ -2,12 +2,12 @@ import React, { useState } from "react";
 import Footer from "../Layouts/Footer";
 import Sidebar from "../Layouts/Sidebar";
 import Header from "../Layouts/Header";
-import Modal from "../Auth/Components/Modal"; // Import modal di sini
+import Modal from "../Auth/Components/Modal";
 import { Outlet } from "react-router-dom";
 
 const Dashboard = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalTitle, setModalTitle] = useState('');
+  const [modalTitle, setModalTitle] = useState("");
   const [modalContent, setModalContent] = useState(null);
 
   const openModal = (title, content) => {
@@ -18,7 +18,7 @@ const Dashboard = () => {
 
   const closeModal = () => {
     setIsModalOpen(false);
-    setModalTitle('');
+    setModalTitle("");
     setModalContent(null);
   };
 
@@ -28,7 +28,7 @@ const Dashboard = () => {
         <Sidebar />
         <div className="flex flex-col flex-1 relative">
           <Header />
-          
+
           {/* Modal di sini */}
           <Modal isOpen={isModalOpen} onClose={closeModal} title={modalTitle}>
             {modalContent}
@@ -38,7 +38,7 @@ const Dashboard = () => {
           <div className="flex-1 overflow-y-auto">
             <Outlet context={{ openModal }} />
           </div>
-          
+
           <Footer />
         </div>
       </div>
