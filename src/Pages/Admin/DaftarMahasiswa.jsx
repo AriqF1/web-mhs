@@ -13,7 +13,6 @@ const DaftarMahasiswa = () => {
   const [selectedJurusan, setSelectedJurusan] = useState("");
   const [ListMahasiswa, setListMahasiswa] = useState(ListMahasiswaData);
 
-  // Fungsi untuk membuka modal
   const openModal = (title, content) => {
     console.log("Modal dibuka dengan title:", title);
     setModalTitle(title);
