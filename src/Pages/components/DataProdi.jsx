@@ -11,7 +11,6 @@ import Modal from "./organism/Modal.jsx";
 import React, { useState } from "react";
 import ListProdi from "../../data/ListProdi.jsx";
 import Swal from "sweetalert2";
-import { SiKde } from "react-icons/si";
 
 const DataProdi = ({ filteredProdi }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
