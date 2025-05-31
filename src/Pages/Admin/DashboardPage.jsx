@@ -2,7 +2,7 @@ import React from "react";
 import ListMahasiswa from "../../data/ListMahasiswa";
 import ListDosen from "../../data/ListDosen";
 import ListProdi from "../../data/ListProdi";
-import DataMonitor from "../components/DataMonitor";
+import DataMonitor from "../components/molecules/DataMonitor";
 import DataDistribusi from "../components/DataDistribusi";
 
 const dashboardData = [
