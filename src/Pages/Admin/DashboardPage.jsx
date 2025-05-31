@@ -45,7 +45,7 @@ const dashboardData = [
   },
 ];
 
-const DashboardHome = () => {
+const DashboardPage = () => {
   return (
     <>
       <DataMonitor data={dashboardData} />
@@ -54,4 +54,4 @@ const DashboardHome = () => {
   );
 };
 
-export default DashboardHome;
+export default DashboardPage;
