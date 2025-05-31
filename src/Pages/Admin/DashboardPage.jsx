@@ -3,7 +3,7 @@ import ListMahasiswa from "../../data/ListMahasiswa";
 import ListDosen from "../../data/ListDosen";
 import ListProdi from "../../data/ListProdi";
 import DataMonitor from "../components/molecules/DataMonitor";
-import DataDistribusi from "../components/molecules/DataDistribusi";
+import DataDistribusi from "../components/organism/DataDistribusi";
 
 const dashboardData = [
   {
