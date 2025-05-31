@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Modal from "../components/organism/Modal.jsx";
 import { FaEdit, FaTrash, FaSearch, FaUserPlus, FaEye } from "react-icons/fa";
 import ListDosen from "../../data/ListDosen.jsx";
+import DetailDosen from "../components/organism/DetailDosen.jsx";
 
 const DaftarDosen = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -10,7 +11,6 @@ const DaftarDosen = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedProdi, setSelectedProdi] = useState("");
 
-  // Fungsi untuk membuka modal
   const openModal = (title, content) => {
     console.log("Modal dibuka dengan title:", title);
     setModalTitle(title);
@@ -27,51 +27,7 @@ const DaftarDosen = () => {
     return matchesSearch && matchesProdi;
   });
 
-  // Ekstrak prodi unik untuk dropdown filter
   const uniqueProdi = [...new Set(ListDosen.map((dsn) => dsn.prodi))];
-
-  // Render detail dosen
-  const DetailDosen = ({ dsn }) => (
-    <div className="space-y-4">
-      <div className="flex justify-center mb-4">
-        <div className="w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center text-4xl text-gray-500">
-          {dsn.nama.charAt(0)}
-        </div>
-      </div>
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <h4 className="text-sm font-medium text-gray-500">nip</h4>
-          <p>{dsn.nip}</p>
-        </div>
-        <div>
-          <h4 className="text-sm font-medium text-gray-500">Nama</h4>
-          <p>{dsn.nama}</p>
-        </div>
-        <div>
-          <h4 className="text-sm font-medium text-gray-500">Email</h4>
-          <p>{dsn.email}</p>
-        </div>
-        <div>
-          <h4 className="text-sm font-medium text-gray-500">prodi</h4>
-          <p>{dsn.prodi}</p>
-        </div>
-        <div>
-          <h4 className="text-sm font-medium text-gray-500">Status</h4>
-          <span
-            className={`px-2 py-1 text-xs rounded-full ${
-              dsn.status === "Aktif"
-                ? "bg-green-100 text-green-800"
-                : dsn.status === "Cuti"
-                ? "bg-yellow-100 text-yellow-800"
-                : "bg-red-100 text-red-800"
-            }`}
-          >
-            {dsn.status}
-          </span>
-        </div>
-      </div>
-    </div>
-  );
 
   return (
     <div className="flex-1 p-6 overflow-auto bg-gray-50">
@@ -157,6 +113,16 @@ const DaftarDosen = () => {
                       >
                         {dsn.status}
                       </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                      <button
+                        onClick={() =>
+                          openModal("Detail Dosen", <DetailDosen dsn={dsn} />)
+                        }
+                        className="text-blue-600 hover:text-blue-900 mr-3"
+                      >
+                        <FaEye />
+                      </button>
                     </td>
                   </tr>
                 ))
