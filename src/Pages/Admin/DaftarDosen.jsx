@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Modal from "../Auth/Components/Modal";
+import Modal from "../components/organism/Modal.jsx";
 import { FaEdit, FaTrash, FaSearch, FaUserPlus, FaEye } from "react-icons/fa";
 import ListDosen from "../../data/ListDosen.jsx";
 

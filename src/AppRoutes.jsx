@@ -1,11 +1,11 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import LoginPage from "./Pages/Auth/LoginPage";
-import Dashboard from "./Pages/Admin/Dashboard";
+import LoginPage from "./pages/Auth/LoginPage";
+import Dashboard from "./pages/Admin/Dashboard";
 import ProtectedRoute from "./ProtectedRoute";
-import DaftarMahasiswa from "./Pages/Admin/DaftarMahasiswa";
-import DaftarProdi from "./Pages/Admin/DaftarProdi";
-import DashboardHome from "./Pages/Admin/DashboardHome";
-import DaftarDosen from "./Pages/Admin/DaftarDosen";
+import DaftarMahasiswa from "./pages/Admin/DaftarMahasiswa";
+import DaftarProdi from "./pages/Admin/DaftarProdi";
+import DashboardPage from "./pages/Admin/DashboardPage";
+import DaftarDosen from "./pages/Admin/DaftarDosen";
 
 const AppRoutes = () => {
   return (
@@ -18,7 +18,7 @@ const AppRoutes = () => {
         <Route path="/admin" element={<ProtectedRoute />}>
           {/* Dashboard sebagai Layout */}
           <Route path="dashboard" element={<Dashboard />}>
-            <Route path="index" element={<DashboardHome />} />
+            <Route path="index" element={<DashboardPage />} />
             <Route path="mahasiswa" element={<DaftarMahasiswa />} />
             <Route path="detail" element={<DaftarProdi />} />
             <Route path="dosen" element={<DaftarDosen />} />

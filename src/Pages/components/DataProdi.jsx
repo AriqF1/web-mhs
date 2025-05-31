@@ -6,8 +6,8 @@ import {
   FaGraduationCap,
   FaUsers,
 } from "react-icons/fa";
-import AddForm from "../Auth/Components/AddForm";
-import Modal from "../Auth/Components/Modal";
+import AddForm from "./molecules/AddForm.jsx";
+import Modal from "./organism/Modal.jsx";
 import React, { useState } from "react";
 import ListProdi from "../../data/ListProdi.jsx";
 import Swal from "sweetalert2";

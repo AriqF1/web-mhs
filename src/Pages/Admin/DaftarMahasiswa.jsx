@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import Modal from "../Auth/Components/Modal";
+import Modal from "../components/organism/Modal.jsx";
 import { FaEdit, FaTrash, FaSearch, FaUserPlus, FaEye } from "react-icons/fa";
 import ListMahasiswaData from "../../data/ListMahasiswa.jsx";
-import MahasiswaForm from "../Auth/Components/MahasiswaForm.jsx";
+import MahasiswaForm from "../components/organism/MahasiswaForm.jsx";
 import Swal from "sweetalert2";
 
 const DaftarMahasiswa = () => {

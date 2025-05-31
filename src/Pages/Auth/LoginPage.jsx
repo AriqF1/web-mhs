@@ -1,8 +1,8 @@
 import React from "react";
 import { useState } from "react";
-import Button from "./Components/Button";
-import Input from "./Components/Input";
-import Label from "./Components/Label";
+import Button from "../components/atoms/Button";
+import Input from "../components/atoms/Input";
+import Label from "../components/atoms/Label";
 import { users } from "../../dummyData";
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";

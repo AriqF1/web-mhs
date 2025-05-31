@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import Footer from "../Layouts/Footer";
-import Sidebar from "../Layouts/Sidebar";
-import Header from "../Layouts/Header";
-import Modal from "../Auth/Components/Modal";
+import Footer from "../components/Layouts/Footer";
+import Sidebar from "../components/Layouts/Sidebar";
+import Header from "../components/Layouts/Header";
+import Modal from "../components/organism/Modal";
 import { Outlet } from "react-router-dom";
 
 const Dashboard = () => {
