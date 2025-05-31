@@ -1,11 +1,11 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import LoginPage from "./pages/Auth/LoginPage";
+import LoginPage from "./pages/auth/LoginPage";
 import Dashboard from "./pages/admin/Dashboard";
 import ProtectedRoute from "./ProtectedRoute";
 import DaftarMahasiswa from "./pages/admin/DaftarMahasiswa";
 import DaftarProdi from "./pages/admin/DaftarProdi";
 import DashboardPage from "./pages/admin/DashboardPage";
-import DaftarDosen from "./pages/admin/DaftarDosen";
+import DaftarDosen from "./pages/Admin/DaftarDosen";
 
 const AppRoutes = () => {
   return (
