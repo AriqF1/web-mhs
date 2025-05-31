@@ -1,4 +1,3 @@
-import React from "react";
 import ListMahasiswa from "../../data/ListMahasiswa";
 import ListDosen from "../../data/ListDosen";
 import ListProdi from "../../data/ListProdi";
