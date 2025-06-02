@@ -3,6 +3,7 @@ import Modal from "../components/organism/Modal.jsx";
 import { FaEdit, FaTrash, FaSearch, FaUserPlus, FaEye } from "react-icons/fa";
 import ListMahasiswaData from "../../data/ListMahasiswa.jsx";
 import MahasiswaForm from "../components/organism/MahasiswaForm.jsx";
+import DetailMahasiswa from "../components/organism/DetailMahasiswa.jsx";
 import Swal from "sweetalert2";
 
 const DaftarMahasiswa = () => {
@@ -51,53 +52,6 @@ const DaftarMahasiswa = () => {
 
   // Ekstrak jurusan unik untuk dropdown filter
   const uniqueJurusan = [...new Set(ListMahasiswa.map((mhs) => mhs.jurusan))];
-
-  // Render detail mahasiswa
-  const DetailMahasiswa = ({ mhs }) => (
-    <div className="space-y-4">
-      <div className="flex justify-center mb-4">
-        <div className="w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center text-4xl text-gray-500">
-          {mhs.nama.charAt(0)}
-        </div>
-      </div>
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <h4 className="text-sm font-medium text-gray-500">NIM</h4>
-          <p>{mhs.nim}</p>
-        </div>
-        <div>
-          <h4 className="text-sm font-medium text-gray-500">Nama</h4>
-          <p>{mhs.nama}</p>
-        </div>
-        <div>
-          <h4 className="text-sm font-medium text-gray-500">Email</h4>
-          <p>{mhs.email}</p>
-        </div>
-        <div>
-          <h4 className="text-sm font-medium text-gray-500">Jurusan</h4>
-          <p>{mhs.jurusan}</p>
-        </div>
-        <div>
-          <h4 className="text-sm font-medium text-gray-500">Angkatan</h4>
-          <p>{mhs.angkatan}</p>
-        </div>
-        <div>
-          <h4 className="text-sm font-medium text-gray-500">Status</h4>
-          <span
-            className={`px-2 py-1 text-xs rounded-full ${
-              mhs.status === "Aktif"
-                ? "bg-green-100 text-green-800"
-                : mhs.status === "Cuti"
-                ? "bg-yellow-100 text-yellow-800"
-                : "bg-red-100 text-red-800"
-            }`}
-          >
-            {mhs.status}
-          </span>
-        </div>
-      </div>
-    </div>
-  );
 
   return (
     <div className="flex-1 p-6 overflow-auto bg-gray-50">
