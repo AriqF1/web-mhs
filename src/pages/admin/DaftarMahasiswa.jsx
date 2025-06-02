@@ -39,8 +39,6 @@ const DaftarMahasiswa = () => {
       }
     });
   };
-
-  // Filter mahasiswa berdasarkan pencarian dan jurusan
   const filteredMahasiswa = ListMahasiswa.filter((mhs) => {
     const matchesSearch =
       mhs.nama.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -50,7 +48,6 @@ const DaftarMahasiswa = () => {
     return matchesSearch && matchesJurusan;
   });
 
-  // Ekstrak jurusan unik untuk dropdown filter
   const uniqueJurusan = [...new Set(ListMahasiswa.map((mhs) => mhs.jurusan))];
 
   return (
