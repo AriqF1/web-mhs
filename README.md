@@ -43,13 +43,29 @@ Follow these steps to get your project up and running locally:
    git clone https://github.com/your-username/web-mhs.git
    cd web-mhs
    ```
-2. **Install dependencies:**
+2. **Install dependencies frontend:**
    ```bash
+   cd frontend
    npm install
    ```
-3. **Run the application:**
+3. **Install dependencies backend:**
+
+```bash
+cd ..
+cd backend
+npm install
+```
+
+4. **Run the application:**
+
    ```bash
-   npm start
+   cd ..
+   cd frontend
+   npm run dev
+
+   cd ..
+   cd backend
+   node index.js
    ```
 
 ## 🚀 Usage Examples
