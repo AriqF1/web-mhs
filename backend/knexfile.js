@@ -1,8 +1,9 @@
 import dotenv from "dotenv";
+dotenv.config();
 /**
  * @type { Object.<string, import("knex").Knex.Config> }
  */
-module.exports = {
+const config = {
   development: {
     client: "mysql2",
     connection: {
@@ -17,3 +18,4 @@ module.exports = {
     },
   },
 };
+export default config;
