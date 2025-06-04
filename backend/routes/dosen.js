@@ -1,13 +1,15 @@
 const express = require("express");
 const router = express.Router();
-const db = require("../knexfile");
+const db = require("../db");
 
 // GET semua dosen
-router.get("/", (req, res) => {
-  db.query("SELECT * FROM dosen", (err, results) => {
-    if (err) return res.status(500).json({ error: err });
-    res.json(results);
-  });
+router.get("/", async (req, res) => {
+  try {
+    const dosen = await db("dosen").select("*");
+    res.json(dosen);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 module.exports = router;
