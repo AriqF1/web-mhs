@@ -48,14 +48,12 @@ Follow these steps to get your project up and running locally:
    cd frontend
    npm install
    ```
-3. **Install dependencies backend:**
-
-```bash
-cd ..
-cd backend
-npm install
-```
-
+3. **Install dependencies frontend:**
+   ```bash
+   ccd ..
+   cd backend
+   npm install
+   ```
 4. **Run the application:**
 
    ```bash
