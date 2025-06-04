@@ -4,7 +4,10 @@ const db = require("../db");
 
 // GET semua dosen
 router.get("/", (req, res) => {
-  res.json(db.dosen);
+  db.query("SELECT * FROM dosen", (err, results) => {
+    if (err) return res.status(500).json({ error: err });
+    res.json(results);
+  });
 });
 
 module.exports = router;
