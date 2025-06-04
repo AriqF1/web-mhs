@@ -4,6 +4,7 @@ import { FaEdit, FaTrash, FaSearch, FaUserPlus, FaEye } from "react-icons/fa";
 import ListMahasiswaData from "../../data/ListMahasiswa.jsx";
 import MahasiswaForm from "../components/organism/MahasiswaForm.jsx";
 import DetailMahasiswa from "../components/organism/DetailMahasiswa.jsx";
+import { showSuccess, showCanceled } from "../../utils/sweetAlert.js";
 import Swal from "sweetalert2";
 
 const DaftarMahasiswa = () => {
@@ -33,9 +34,9 @@ const DaftarMahasiswa = () => {
     }).then((result) => {
       if (result.isConfirmed) {
         setListMahasiswa((prev) => prev.filter((mhs) => mhs.nim !== nim));
-        Swal.fire("Dihapus!", "Data telah dihapus.", "success");
+        showSuccess();
       } else {
-        Swal.fire("Dibatalkan", "Data tidak dihapus", "info");
+        showCanceled();
       }
     });
   };
