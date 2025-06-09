@@ -1,8 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Modal from "../components/organism/Modal.jsx";
 import { FaEdit, FaTrash, FaSearch, FaUserPlus, FaEye } from "react-icons/fa";
-import ListDosen from "../../data/ListDosen.jsx";
+import {
+  getAllDosen,
+  addDosen,
+  deleteDosen,
+  updateDosen,
+} from "../../services/dosenService.js";
+import { getAllProdi } from "../../services/prodiService.js";
 import DetailDosen from "../components/organism/DetailDosen.jsx";
+import DosenForm from "../components/organism/DosenForm.jsx";
+import Swal from "sweetalert2";
 
 const DaftarDosen = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -10,25 +18,83 @@ const DaftarDosen = () => {
   const [modalContent, setModalContent] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedProdi, setSelectedProdi] = useState("");
+  const [dosenList, setDosenList] = useState([]);
+  const [prodiList, setProdiList] = useState([]);
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const fetchDosen = async () => {
+    setIsLoading(true);
+    try {
+      const response = await getAllDosen();
+      setDosenList(response);
+    } catch (error) {
+      console.error("Gagal memuat data dosen:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleDelete = (id) => {
+    Swal.fire({
+      title: "Apakah Anda yakin?",
+      text: "Data ini akan dihapus secara permanen!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Hapus",
+      cancelButtonText: "Batal",
+      reverseButtons: true,
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        setIsDeleting(true);
+        try {
+          await deleteDosen(id);
+          await fetchDosen();
+          Swal.fire("Berhasil!", "Data dosen telah dihapus.", "success");
+        } catch (error) {
+          Swal.fire(
+            "Gagal!",
+            "Terjadi kesalahan saat menghapus data.",
+            "error"
+          );
+          console.log("Error deleting dosen:", error);
+        } finally {
+          setIsDeleting(false);
+        }
+      } else {
+        Swal.fire("Dibatalkan", "Data dosen tidak jadi dihapus.", "info");
+      }
+    });
+  };
+
+  const fetchProdi = async () => {
+    try {
+      const response = await getAllProdi();
+      setProdiList(response);
+    } catch (error) {
+      console.error("Gagal memuat data prodi:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchDosen();
+    fetchProdi();
+  }, []);
 
   const openModal = (title, content) => {
-    console.log("Modal dibuka dengan title:", title);
     setModalTitle(title);
     setModalContent(content);
     setIsModalOpen(true);
   };
 
-  // Filter mahasiswa berdasarkan pencarian dan prodi
-  const filteredDosen = ListDosen.filter((dsn) => {
+  const filteredDosen = dosenList.filter((dsn) => {
     const matchesSearch =
       dsn.nama.toLowerCase().includes(searchTerm.toLowerCase()) ||
       dsn.nip.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesProdi = selectedProdi === "" || dsn.prodi === selectedProdi;
     return matchesSearch && matchesProdi;
   });
-
-  const uniqueProdi = [...new Set(ListDosen.map((dsn) => dsn.prodi))];
-
   return (
     <div className="flex-1 p-6 overflow-auto bg-gray-50">
       <div className="mb-6">
@@ -58,13 +124,34 @@ const DaftarDosen = () => {
                 className="block w-full md:w-48 px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               >
                 <option value="">Semua prodi</option>
-                {uniqueProdi.map((prodi) => (
-                  <option key={prodi} value={prodi}>
-                    {prodi}
+                {prodiList.map((prodi) => (
+                  <option key={prodi.id} value={prodi.id}>
+                    {prodi.nama}
                   </option>
                 ))}
               </select>
             </div>
+            <button
+              onClick={() =>
+                openModal(
+                  "Tambah Dosen",
+                  <DosenForm
+                    prodiList={prodiList}
+                    onSubmit={async (data) => {
+                      await addDosen(data);
+                      const updated = await getAllDosen();
+                      setDosenList(updated);
+                      setIsModalOpen(false);
+                    }}
+                    onCancel={() => setIsModalOpen(false)}
+                  />
+                )
+              }
+              className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center justify-center"
+            >
+              <FaUserPlus className="mr-2" />
+              Tambah Dosen
+            </button>
           </div>
         </div>
 
@@ -81,7 +168,7 @@ const DaftarDosen = () => {
             <tbody className="bg-white divide-y divide-gray-200">
               {filteredDosen.length > 0 ? (
                 filteredDosen.map((dsn) => (
-                  <tr key={dsn.nip} className="hover:bg-gray-50">
+                  <tr key={dsn.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap font-medium">
                       {dsn.nip}
                     </td>
@@ -123,6 +210,31 @@ const DaftarDosen = () => {
                       >
                         <FaEye />
                       </button>
+                      <button
+                        onClick={() =>
+                          openModal(
+                            "Edit Dosen",
+                            <DosenForm
+                              initialData={dsn}
+                              prodiList={prodiList}
+                              onSubmit={async (data) => {
+                                await updateDosen(dsn.id, data);
+                                console.log("Data updated:", data);
+                                const updated = await getAllDosen();
+                                setDosenList(updated);
+                                setIsModalOpen(false);
+                              }}
+                              onCancel={() => setIsModalOpen(false)}
+                            />
+                          )
+                        }
+                        className="text-yellow-600 hover:text-yellow-900 mr-3"
+                      >
+                        <FaEdit />
+                      </button>
+                      <button onClick={() => handleDelete(dsn.id)}>
+                        <FaTrash />
+                      </button>
                     </td>
                   </tr>
                 ))
@@ -154,7 +266,7 @@ const DaftarDosen = () => {
               <p className="text-sm text-gray-700">
                 Menampilkan{" "}
                 <span className="font-medium">{filteredDosen.length}</span> dari{" "}
-                <span className="font-medium">{ListDosen.length}</span> dosen
+                <span className="font-medium">{dosenList.length}</span> dosen
               </p>
             </div>
             <div>
