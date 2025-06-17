@@ -6,6 +6,7 @@ import DaftarMahasiswa from "./pages/admin/DaftarMahasiswa";
 import DaftarProdi from "./pages/admin/DaftarProdi";
 import DashboardPage from "./pages/admin/DashboardPage";
 import DaftarDosen from "./pages/Admin/DaftarDosen";
+import DaftarMatakuliah from "./pages/admin/DaftarMatkul";
 
 const AppRoutes = () => {
   return (
@@ -20,6 +21,7 @@ const AppRoutes = () => {
           <Route path="dashboard" element={<Dashboard />}>
             <Route path="index" element={<DashboardPage />} />
             <Route path="mahasiswa" element={<DaftarMahasiswa />} />
+            <Route path="matkul" element={<DaftarMatakuliah />} />
             <Route path="detail" element={<DaftarProdi />} />
             <Route path="dosen" element={<DaftarDosen />} />
           </Route>
