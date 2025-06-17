@@ -67,6 +67,21 @@ const Sidebar = () => {
           </span>
         </NavLink>
 
+        {/* Matkul */}
+        <NavLink
+          to="/admin/dashboard/matkul"
+          className={({ isActive }) =>
+            `flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors duration-200 ${
+              isActive ? "bg-blue-700 shadow-md" : "hover:bg-blue-800"
+            }`
+          }
+        >
+          <FaClipboardList className="text-xl" />
+          <span className="menu-text hidden lg:inline font-medium">
+            Daftar Matkul
+          </span>
+        </NavLink>
+
         {/* Dosen */}
         <NavLink
           to="/admin/dashboard/dosen"
