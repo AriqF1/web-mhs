@@ -3,34 +3,39 @@ import { useState } from "react";
 import Button from "../components/atoms/Button";
 import Input from "../components/atoms/Input";
 import Label from "../components/atoms/Label";
-import { users } from "../../dummyData";
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 import { toast } from "react-toastify";
+import { loginUser } from "../../services/authService.js";
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const user = users.find(
-      (u) => u.email === formData.email && u.password === formData.password
-    );
+    setLoading(true);
 
-    if (user) {
-      console.log("Login berhasil:", user);
-      localStorage.setItem("user", JSON.stringify(user));
-      toast.success("Login berhasil!");
+    try {
+      const response = await loginUser(formData.email, formData.password);
+
+      console.log("Login berhasil:", response);
+      localStorage.setItem("user", JSON.stringify(response.user));
+      localStorage.setItem("token", response.token);
+
+      toast.success(response.message);
       navigate("/admin/dashboard/index");
-    } else {
-      console.log("Login gagal: Email atau password salah.");
-      toast.error("Login gagal: Email atau password salah.");
+    } catch (error) {
+      console.error("Login gagal:", error);
+      toast.error(error);
+    } finally {
+      setLoading(false);
     }
   };
 
