@@ -1,0 +1,72 @@
+[
+  {
+    "id": 1,
+    "nama": "Andi Saputra",
+    "jurusan": "Teknik Informatika",
+    "nim": "A11.2020.00001",
+    "status": "Aktif"
+  },
+  {
+    "id": 2,
+    "nama": "Budi Santoso",
+    "jurusan": "Teknik Informatika",
+    "nim": "A11.2020.00012",
+    "status": "Aktif"
+  },
+  {
+    "id": 3,
+    "nama": "Citra Lestari",
+    "jurusan": "Teknik Informatika",
+    "nim": "A11.2020.00023",
+    "status": "Aktif"
+  },
+  {
+    "id": 4,
+    "nama": "Dewi Kusuma",
+    "jurusan": "Teknik Informatika",
+    "nim": "A11.2020.00034",
+    "status": "Aktif"
+  },
+  {
+    "id": 5,
+    "nama": "Eko Prasetyo",
+    "jurusan": "Teknik Informatika",
+    "nim": "A11.2020.00045",
+    "status": "Aktif"
+  },
+  {
+    "id": 6,
+    "nama": "Fajar Maulana",
+    "jurusan": "Teknik Informatika",
+    "nim": "A11.2020.00056",
+    "status": "Aktif"
+  },
+  {
+    "id": 7,
+    "nama": "Gita Ramadhani",
+    "jurusan": "Teknik Informatika",
+    "nim": "A11.2020.00067",
+    "status": "Aktif"
+  },
+  {
+    "id": 8,
+    "nama": "Hendra Wijaya",
+    "jurusan": "Teknik Informatika",
+    "nim": "A11.2020.00078",
+    "status": "Aktif"
+  },
+  {
+    "id": 9,
+    "nama": "Intan Permata",
+    "jurusan": "Teknik Informatika",
+    "nim": "A11.2020.00089",
+    "status": "Aktif"
+  },
+  {
+    "id": 10,
+    "nama": "Joko Nugroho",
+    "jurusan": "Teknik Informatika",
+    "nim": "A11.2020.00100",
+    "status": "Aktif"
+  }
+]
