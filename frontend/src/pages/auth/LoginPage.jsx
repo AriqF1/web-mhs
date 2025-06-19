@@ -6,7 +6,7 @@ import Label from "../components/atoms/Label";
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 import { toast } from "react-toastify";
-import { loginUser } from "../../services/authService.js";
+import { login } from "@/Utils/Apis/AuthApi";
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
@@ -20,22 +20,15 @@ const LoginPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
+    const { email, password } = formData;
 
     try {
-      const response = await loginUser(formData.email, formData.password);
-
-      console.log("Login berhasil:", response);
-      localStorage.setItem("user", JSON.stringify(response.user));
-      localStorage.setItem("token", response.token);
-
-      toast.success(response.message);
+      const user = await login(email, password);
+      localStorage.setItem("user", JSON.stringify(user));
+      toast("Login berhasil");
       navigate("/admin/dashboard/index");
-    } catch (error) {
-      console.error("Login gagal:", error);
-      toast.error(error);
-    } finally {
-      setLoading(false);
+    } catch (err) {
+      toast(err.message);
     }
   };
 
