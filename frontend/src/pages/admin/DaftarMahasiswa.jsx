@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Modal from "../components/organism/Modal.jsx";
 import { FaEdit, FaTrash, FaSearch, FaUserPlus, FaEye } from "react-icons/fa";
 import ListMahasiswaData from "../../data/ListMahasiswa.jsx";
@@ -6,6 +6,12 @@ import MahasiswaForm from "../components/organism/MahasiswaForm.jsx";
 import DetailMahasiswa from "../components/organism/DetailMahasiswa.jsx";
 import { showSuccess, showCanceled } from "../../utils/sweetAlert.js";
 import Swal from "sweetalert2";
+import {
+  getAllMahasiswa,
+  storeMahasiswa,
+  updateMahasiswa,
+  deleteMahasiswa,
+} from "@/utils/apis/MahasiswaApi";
 
 const DaftarMahasiswa = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -13,7 +19,30 @@ const DaftarMahasiswa = () => {
   const [modalContent, setModalContent] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedJurusan, setSelectedJurusan] = useState("");
-  const [ListMahasiswa, setListMahasiswa] = useState(ListMahasiswaData);
+  const [ListMahasiswa, setListMahasiswa] = useState([]);
+
+  useEffect(() => {
+    fetchMahasiswa();
+  }, []);
+
+  const fetchMahasiswa = async () => {
+    try {
+      const res = await getAllMahasiswa();
+      setListMahasiswa(res.data);
+    } catch (err) {
+      console.error("Gagal fetch data:", err);
+    }
+  };
+
+  const handleSubmit = async (data) => {
+    // ....
+    confirmUpdate(() => {
+      updateMahasiswa(form.id, form);
+      // ....
+    });
+    // ....
+    storeMahasiswa(form);
+  };
 
   const openModal = (title, content) => {
     console.log("Modal dibuka dengan title:", title);
@@ -33,6 +62,7 @@ const DaftarMahasiswa = () => {
       reverseButtons: true,
     }).then((result) => {
       if (result.isConfirmed) {
+        deleteMahasiswa(nim);
         setListMahasiswa((prev) => prev.filter((mhs) => mhs.nim !== nim));
         showSuccess();
       } else {
