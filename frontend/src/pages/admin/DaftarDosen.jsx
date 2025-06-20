@@ -3,11 +3,10 @@ import Modal from "../components/organism/Modal.jsx";
 import { FaEdit, FaTrash, FaSearch, FaUserPlus, FaEye } from "react-icons/fa";
 import {
   getAllDosen,
-  addDosen,
+  storeDosen,
   deleteDosen,
   updateDosen,
-} from "../../services/dosenService.js";
-import { getAllProdi } from "../../services/prodiService.js";
+} from "../../utils/apis/DosenApi.jsx";
 import DetailDosen from "../components/organism/DetailDosen.jsx";
 import DosenForm from "../components/organism/DosenForm.jsx";
 import Swal from "sweetalert2";
@@ -19,7 +18,7 @@ const DaftarDosen = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedProdi, setSelectedProdi] = useState("");
   const [dosenList, setDosenList] = useState([]);
-  const [prodiList, setProdiList] = useState([]);
+  const [prodiOptions, setProdiOptions] = useState([]);
 
   const [isLoading, setIsLoading] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -28,13 +27,24 @@ const DaftarDosen = () => {
     setIsLoading(true);
     try {
       const response = await getAllDosen();
-      setDosenList(response);
+      const dosenData = response.data;
+      setDosenList(dosenData);
+
+      const uniqueProdi = [...new Set(dosenData.map((dsn) => dsn.prodi))].map(
+        (prodiName, index) => ({ id: index, nama: prodiName })
+      );
+      setProdiOptions(uniqueProdi);
     } catch (error) {
       console.error("Gagal memuat data dosen:", error);
+      Swal.fire("Gagal!", "Terjadi kesalahan saat memuat data dosen.", "error");
     } finally {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchDosen();
+  }, []);
 
   const handleDelete = (id) => {
     Swal.fire({
@@ -45,6 +55,13 @@ const DaftarDosen = () => {
       confirmButtonText: "Hapus",
       cancelButtonText: "Batal",
       reverseButtons: true,
+      customClass: {
+        confirmButton:
+          "bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded",
+        cancelButton:
+          "bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded ml-2",
+      },
+      buttonsStyling: false,
     }).then(async (result) => {
       if (result.isConfirmed) {
         setIsDeleting(true);
@@ -58,7 +75,7 @@ const DaftarDosen = () => {
             "Terjadi kesalahan saat menghapus data.",
             "error"
           );
-          console.log("Error deleting dosen:", error);
+          console.error("Error deleting dosen:", error);
         } finally {
           setIsDeleting(false);
         }
@@ -68,20 +85,6 @@ const DaftarDosen = () => {
     });
   };
 
-  const fetchProdi = async () => {
-    try {
-      const response = await getAllProdi();
-      setProdiList(response);
-    } catch (error) {
-      console.error("Gagal memuat data prodi:", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchDosen();
-    fetchProdi();
-  }, []);
-
   const openModal = (title, content) => {
     setModalTitle(title);
     setModalContent(content);
@@ -90,11 +93,15 @@ const DaftarDosen = () => {
 
   const filteredDosen = dosenList.filter((dsn) => {
     const matchesSearch =
-      dsn.nama.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      dsn.nip.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesProdi = selectedProdi === "" || dsn.prodi === selectedProdi;
+      (dsn.nama && dsn.nama.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (dsn.nip && dsn.nip.toLowerCase().includes(searchTerm.toLowerCase()));
+
+    const matchesProdi =
+      selectedProdi === "" || (dsn.prodi && dsn.prodi === selectedProdi);
+
     return matchesSearch && matchesProdi;
   });
+
   return (
     <div className="flex-1 p-6 overflow-auto bg-gray-50">
       <div className="mb-6">
@@ -124,8 +131,8 @@ const DaftarDosen = () => {
                 className="block w-full md:w-48 px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               >
                 <option value="">Semua prodi</option>
-                {prodiList.map((prodi) => (
-                  <option key={prodi.id} value={prodi.id}>
+                {prodiOptions.map((prodi) => (
+                  <option key={prodi.id} value={prodi.nama}>
                     {prodi.nama}
                   </option>
                 ))}
@@ -136,12 +143,16 @@ const DaftarDosen = () => {
                 openModal(
                   "Tambah Dosen",
                   <DosenForm
-                    prodiList={prodiList}
+                    prodiList={prodiOptions}
                     onSubmit={async (data) => {
-                      await addDosen(data);
-                      const updated = await getAllDosen();
-                      setDosenList(updated);
+                      await storeDosen(data);
+                      fetchDosen();
                       setIsModalOpen(false);
+                      Swal.fire(
+                        "Berhasil!",
+                        "Dosen berhasil ditambahkan.",
+                        "success"
+                      );
                     }}
                     onCancel={() => setIsModalOpen(false)}
                   />
@@ -161,12 +172,22 @@ const DaftarDosen = () => {
               <tr className="bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 <th className="px-6 py-3">Nip</th>
                 <th className="px-6 py-3">Nama</th>
-                <th className="px-6 py-3">prodi</th>
-                <th className="px-6 py-3">Status</th>
+                <th className="px-6 py-3">Prodi</th>
+                <th className="px-6 py-3">Max SKS</th>
+                <th className="px-6 py-3 text-right">Aksi</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {filteredDosen.length > 0 ? (
+              {isLoading ? (
+                <tr>
+                  <td
+                    colSpan="5"
+                    className="px-6 py-4 text-center text-gray-500"
+                  >
+                    Memuat data dosen...
+                  </td>
+                </tr>
+              ) : filteredDosen.length > 0 ? (
                 filteredDosen.map((dsn) => (
                   <tr key={dsn.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap font-medium">
@@ -175,38 +196,27 @@ const DaftarDosen = () => {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
                         <div className="w-8 h-8 mr-3 bg-blue-100 text-blue-800 rounded-full flex items-center justify-center font-semibold">
-                          {dsn.nama.charAt(0)}
+                          {dsn.nama ? dsn.nama.charAt(0) : "N/A"}
                         </div>
                         <div>
                           <div className="font-medium text-gray-900">
                             {dsn.nama}
-                          </div>
-                          <div className="text-sm text-gray-500">
-                            {dsn.email}
                           </div>
                         </div>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">{dsn.prodi}</td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span
-                        className={`px-2 py-1 text-xs rounded-full ${
-                          dsn.status === "Aktif"
-                            ? "bg-green-100 text-green-800"
-                            : dsn.status === "Cuti"
-                            ? "bg-yellow-100 text-yellow-800"
-                            : "bg-red-100 text-red-800"
-                        }`}
-                      >
-                        {dsn.status}
-                      </span>
+                      {dsn.max_sks}
                     </td>
+
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <button
                         onClick={() =>
                           openModal("Detail Dosen", <DetailDosen dsn={dsn} />)
                         }
                         className="text-blue-600 hover:text-blue-900 mr-3"
+                        title="Lihat Detail"
                       >
                         <FaEye />
                       </button>
@@ -216,23 +226,31 @@ const DaftarDosen = () => {
                             "Edit Dosen",
                             <DosenForm
                               initialData={dsn}
-                              prodiList={prodiList}
+                              prodiList={prodiOptions}
                               onSubmit={async (data) => {
                                 await updateDosen(dsn.id, data);
-                                console.log("Data updated:", data);
-                                const updated = await getAllDosen();
-                                setDosenList(updated);
+                                fetchDosen();
                                 setIsModalOpen(false);
+                                Swal.fire(
+                                  "Berhasil!",
+                                  "Data dosen berhasil diperbarui.",
+                                  "success"
+                                );
                               }}
                               onCancel={() => setIsModalOpen(false)}
                             />
                           )
                         }
                         className="text-yellow-600 hover:text-yellow-900 mr-3"
+                        title="Edit Dosen"
                       >
                         <FaEdit />
                       </button>
-                      <button onClick={() => handleDelete(dsn.id)}>
+                      <button
+                        onClick={() => handleDelete(dsn.id)}
+                        className="text-red-600 hover:text-red-900"
+                        title="Hapus Dosen"
+                      >
                         <FaTrash />
                       </button>
                     </td>
