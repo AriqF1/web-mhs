@@ -1,0 +1,72 @@
+[
+  {
+    "id": "1",
+    "nip": "1122148",
+    "name": "Slamet",
+    "prodi": "Teknik Informatika",
+    "max_sks": 12
+  },
+  {
+    "id": "2",
+    "nip": "1122149",
+    "name": "Ayu Puspitasari",
+    "prodi": "Sistem Informasi",
+    "max_sks": 10
+  },
+  {
+    "id": "3",
+    "nip": "1122150",
+    "name": "Budi Santoso",
+    "prodi": "Teknik Informatika",
+    "max_sks": 9
+  },
+  {
+    "id": "4",
+    "nip": "1122151",
+    "name": "Citra Dewi",
+    "prodi": "Sistem Informasi",
+    "max_sks": 12
+  },
+  {
+    "id": "5",
+    "nip": "1122152",
+    "name": "Doni Pratama",
+    "prodi": "Teknik Komputer",
+    "max_sks": 11
+  },
+  {
+    "id": "6",
+    "nip": "1122153",
+    "name": "Eka Wulandari",
+    "prodi": "Teknik Informatika",
+    "max_sks": 10
+  },
+  {
+    "id": "7",
+    "nip": "1122154",
+    "name": "Fajar Nugroho",
+    "prodi": "Sistem Informasi",
+    "max_sks": 12
+  },
+  {
+    "id": "8",
+    "nip": "1122155",
+    "name": "Gita Ningsih",
+    "prodi": "Teknik Komputer",
+    "max_sks": 9
+  },
+  {
+    "id": "9",
+    "nip": "1122156",
+    "name": "Hariyanto",
+    "prodi": "Teknik Informatika",
+    "max_sks": 8
+  },
+  {
+    "id": "10",
+    "nip": "1122157",
+    "name": "Intan Permata",
+    "prodi": "Sistem Informasi",
+    "max_sks": 12
+  }
+]

@@ -1,0 +1,12 @@
+[
+  { "id": "1", "name": "Algoritma dan Pemrograman", "sks": 3 },
+  { "id": "2", "name": "Basis Data", "sks": 3 },
+  { "id": "3", "name": "Jaringan Komputer", "sks": 2 },
+  { "id": "4", "name": "Struktur Data", "sks": 3 },
+  { "id": "5", "name": "Sistem Operasi", "sks": 3 },
+  { "id": "6", "name": "Pemrograman Web", "sks": 3 },
+  { "id": "7", "name": "Rekayasa Perangkat Lunak", "sks": 3 },
+  { "id": "8", "name": "Kecerdasan Buatan", "sks": 2 },
+  { "id": "9", "name": "Pemrograman Mobile", "sks": 3 },
+  { "id": "10", "name": "Manajemen Proyek TI", "sks": 2 }
+]

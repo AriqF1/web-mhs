@@ -23,6 +23,14 @@
     "email": "mahasiswa@mail.com",
     "password": "mahasiswa123",
     "role": "mahasiswa",
-    "permission": ["krs.page", "krs.read"]
+    "permission": [
+      "krs.page",
+      "krs.read",
+      "rencana-studi.page",
+      "rencana-studi.read",
+      "rencana-studi.create",
+      "rencana-studi.update",
+      "rencana-studi.delete"
+    ]
   }
 ]

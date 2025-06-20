@@ -4,69 +4,79 @@
     "nama": "Andi Saputra",
     "jurusan": "Teknik Informatika",
     "nim": "A11.2020.00001",
-    "status": "Aktif"
+    "status": "Aktif",
+    "max_sks": "18"
   },
   {
     "id": 2,
     "nama": "Budi Santoso",
     "jurusan": "Teknik Informatika",
     "nim": "A11.2020.00012",
-    "status": "Aktif"
+    "status": "Aktif",
+    "max_sks": "20"
   },
   {
     "id": 3,
     "nama": "Citra Lestari",
     "jurusan": "Teknik Informatika",
     "nim": "A11.2020.00023",
-    "status": "Aktif"
+    "status": "Aktif",
+    "max_sks": "22"
   },
   {
     "id": 4,
     "nama": "Dewi Kusuma",
     "jurusan": "Teknik Informatika",
     "nim": "A11.2020.00034",
-    "status": "Aktif"
+    "status": "Aktif",
+    "max_sks": "21"
   },
   {
     "id": 5,
     "nama": "Eko Prasetyo",
     "jurusan": "Teknik Informatika",
     "nim": "A11.2020.00045",
-    "status": "Aktif"
+    "status": "Aktif",
+    "max_sks": "19"
   },
   {
     "id": 6,
     "nama": "Fajar Maulana",
     "jurusan": "Teknik Informatika",
     "nim": "A11.2020.00056",
-    "status": "Aktif"
+    "status": "Aktif",
+    "max_sks": "23"
   },
   {
     "id": 7,
     "nama": "Gita Ramadhani",
     "jurusan": "Teknik Informatika",
     "nim": "A11.2020.00067",
-    "status": "Aktif"
+    "status": "Aktif",
+    "max_sks": "20"
   },
   {
     "id": 8,
     "nama": "Hendra Wijaya",
     "jurusan": "Teknik Informatika",
     "nim": "A11.2020.00078",
-    "status": "Aktif"
+    "status": "Aktif",
+    "max_sks": "18"
   },
   {
     "id": 9,
     "nama": "Intan Permata",
     "jurusan": "Teknik Informatika",
     "nim": "A11.2020.00089",
-    "status": "Aktif"
+    "status": "Aktif",
+    "max_sks": "22"
   },
   {
     "id": 10,
     "nama": "Joko Nugroho",
     "jurusan": "Teknik Informatika",
     "nim": "A11.2020.00100",
-    "status": "Aktif"
+    "status": "Aktif",
+    "max_sks": "21"
   }
 ]
