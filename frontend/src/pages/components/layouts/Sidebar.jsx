@@ -7,8 +7,10 @@ import {
   FaClipboardList,
   FaCog,
 } from "react-icons/fa";
+import { useAuthStateContext } from "../../../../AuthContext";
 
 const Sidebar = () => {
+  const { user } = useAuthStateContext();
   return (
     <aside
       id="sidebar"
@@ -23,79 +25,87 @@ const Sidebar = () => {
 
       <nav className="p-4 space-y-1">
         {/* Dashboard */}
-        <NavLink
-          to="/admin/dashboard/index"
-          className={({ isActive }) =>
-            `flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors duration-200 ${
-              isActive ? "bg-blue-700 shadow-md" : "hover:bg-blue-800"
-            }`
-          }
-        >
-          <FaTachometerAlt className="text-xl" />
-          <span className="menu-text hidden lg:inline font-medium">
-            Dashboard
-          </span>
-        </NavLink>
+        {user.permission.includes("dashboard.page") && (
+          <NavLink
+            to="/admin/dashboard/index"
+            className={({ isActive }) =>
+              `flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors duration-200 ${
+                isActive ? "bg-blue-700 shadow-md" : "hover:bg-blue-800"
+              }`
+            }
+          >
+            <FaTachometerAlt className="text-xl" />
+            <span className="menu-text hidden lg:inline font-medium">
+              Dashboard
+            </span>
+          </NavLink>
+        )}
 
         {/* Mahasiswa */}
-        <NavLink
-          to="/admin/dashboard/mahasiswa"
-          className={({ isActive }) =>
-            `flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors duration-200 ${
-              isActive ? "bg-blue-700 shadow-md" : "hover:bg-blue-800"
-            }`
-          }
-        >
-          <FaUserGraduate className="text-xl" />
-          <span className="menu-text hidden lg:inline font-medium">
-            Daftar Mahasiswa
-          </span>
-        </NavLink>
-
+        {user.permission.includes("mahasiswa.page") && (
+          <NavLink
+            to="/admin/dashboard/mahasiswa"
+            className={({ isActive }) =>
+              `flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors duration-200 ${
+                isActive ? "bg-blue-700 shadow-md" : "hover:bg-blue-800"
+              }`
+            }
+          >
+            <FaUserGraduate className="text-xl" />
+            <span className="menu-text hidden lg:inline font-medium">
+              Daftar Mahasiswa
+            </span>
+          </NavLink>
+        )}
         {/* Prodi */}
-        <NavLink
-          to="/admin/dashboard/detail"
-          className={({ isActive }) =>
-            `flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors duration-200 ${
-              isActive ? "bg-blue-700 shadow-md" : "hover:bg-blue-800"
-            }`
-          }
-        >
-          <FaClipboardList className="text-xl" />
-          <span className="menu-text hidden lg:inline font-medium">
-            Daftar Prodi
-          </span>
-        </NavLink>
+        {user.permission.includes("prodi.page") && (
+          <NavLink
+            to="/admin/dashboard/detail"
+            className={({ isActive }) =>
+              `flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors duration-200 ${
+                isActive ? "bg-blue-700 shadow-md" : "hover:bg-blue-800"
+              }`
+            }
+          >
+            <FaClipboardList className="text-xl" />
+            <span className="menu-text hidden lg:inline font-medium">
+              Daftar Prodi
+            </span>
+          </NavLink>
+        )}
 
         {/* Matkul */}
-        <NavLink
-          to="/admin/dashboard/matkul"
-          className={({ isActive }) =>
-            `flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors duration-200 ${
-              isActive ? "bg-blue-700 shadow-md" : "hover:bg-blue-800"
-            }`
-          }
-        >
-          <FaClipboardList className="text-xl" />
-          <span className="menu-text hidden lg:inline font-medium">
-            Daftar Matkul
-          </span>
-        </NavLink>
-
+        {user.permission.includes("matkul.page") && (
+          <NavLink
+            to="/admin/dashboard/matkul"
+            className={({ isActive }) =>
+              `flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors duration-200 ${
+                isActive ? "bg-blue-700 shadow-md" : "hover:bg-blue-800"
+              }`
+            }
+          >
+            <FaClipboardList className="text-xl" />
+            <span className="menu-text hidden lg:inline font-medium">
+              Daftar Matkul
+            </span>
+          </NavLink>
+        )}
         {/* Dosen */}
-        <NavLink
-          to="/admin/dashboard/dosen"
-          className={({ isActive }) =>
-            `flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors duration-200 ${
-              isActive ? "bg-blue-700 shadow-md" : "hover:bg-blue-800"
-            }`
-          }
-        >
-          <FaChalkboardTeacher className="text-xl" />
-          <span className="menu-text hidden lg:inline font-medium">
-            Daftar Dosen
-          </span>
-        </NavLink>
+        {user.permission.includes("dosen.page") && (
+          <NavLink
+            to="/admin/dashboard/dosen"
+            className={({ isActive }) =>
+              `flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors duration-200 ${
+                isActive ? "bg-blue-700 shadow-md" : "hover:bg-blue-800"
+              }`
+            }
+          >
+            <FaChalkboardTeacher className="text-xl" />
+            <span className="menu-text hidden lg:inline font-medium">
+              Daftar Dosen
+            </span>
+          </NavLink>
+        )}
 
         {/* Pengaturan */}
         <div className="pt-6 mt-6 border-t border-blue-700">

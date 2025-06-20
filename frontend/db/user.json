@@ -3,12 +3,26 @@
     "id": 1,
     "name": "Admin 1",
     "email": "admin@mail.com",
-    "password": "admin123"
+    "password": "admin123",
+    "role": "admin",
+    "permission": [
+      "dashboard.page",
+      "mahasiswa.page",
+      "mahasiswa.read",
+      "mahasiswa.create",
+      "mahasiswa.update",
+      "mahasiswa.delete",
+      "dosen.page",
+      "matkul.page",
+      "prodi.page"
+    ]
   },
   {
     "id": 2,
     "name": "Mahasiswa 1",
     "email": "mahasiswa@mail.com",
-    "password": "mahasiswa123"
+    "password": "mahasiswa123",
+    "role": "mahasiswa",
+    "permission": ["krs.page", "krs.read"]
   }
 ]
