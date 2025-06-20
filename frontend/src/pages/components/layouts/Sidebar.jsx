@@ -107,6 +107,22 @@ const Sidebar = () => {
           </NavLink>
         )}
 
+        {user.permission.includes("rencana-studi.page") && (
+          <NavLink
+            to="/admin/dashboard/rencana-studi"
+            className={({ isActive }) =>
+              `flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors duration-200 ${
+                isActive ? "bg-blue-700 shadow-md" : "hover:bg-blue-800"
+              }`
+            }
+          >
+            <FaChalkboardTeacher className="text-xl" />
+            <span className="menu-text hidden lg:inline font-medium">
+              Rencana Studi
+            </span>
+          </NavLink>
+        )}
+
         {/* Pengaturan */}
         <div className="pt-6 mt-6 border-t border-blue-700">
           <div className="px-4 py-2 text-blue-300 text-xs uppercase font-semibold hidden lg:block">
