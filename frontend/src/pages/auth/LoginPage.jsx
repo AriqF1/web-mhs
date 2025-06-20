@@ -7,12 +7,14 @@ import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 import { toast } from "react-toastify";
 import { login } from "@/Utils/Apis/AuthApi";
+import { useAuthStateContext } from "../../../AuthContext";
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { user, setUser } = useAuthStateContext();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -22,13 +24,21 @@ const LoginPage = () => {
     e.preventDefault();
     const { email, password } = formData;
 
+    if (!email || !password) {
+      toast.warning("Email dan password harus diisi");
+      return;
+    }
     try {
+      setLoading(true);
       const user = await login(email, password);
-      localStorage.setItem("user", JSON.stringify(user));
-      toast("Login berhasil");
+      setUser(user);
+      toast.success("Login berhasil");
+
       navigate("/admin/dashboard/index");
     } catch (err) {
-      toast(err.message);
+      toast.error(err.message || "Login gagal");
+    } finally {
+      setLoading(false);
     }
   };
 
