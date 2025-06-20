@@ -14,7 +14,12 @@
       "mahasiswa.delete",
       "dosen.page",
       "matkul.page",
-      "prodi.page"
+      "prodi.page",
+      "rencana-studi.page",
+      "rencana-studi.read",
+      "rencana-studi.create",
+      "rencana-studi.update",
+      "rencana-studi.delete"
     ]
   },
   {
