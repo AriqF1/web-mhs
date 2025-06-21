@@ -1,17 +1,18 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Modal from "../components/organism/Modal.jsx";
 import { FaEdit, FaTrash, FaSearch, FaUserPlus, FaEye } from "react-icons/fa";
-import ListMahasiswaData from "../../data/ListMahasiswa.jsx";
 import MahasiswaForm from "../components/organism/MahasiswaForm.jsx";
 import DetailMahasiswa from "../components/organism/DetailMahasiswa.jsx";
-import { showSuccess, showCanceled } from "../../utils/sweetAlert.js";
 import Swal from "sweetalert2";
+
 import {
-  getAllMahasiswa,
-  storeMahasiswa,
-  updateMahasiswa,
-  deleteMahasiswa,
-} from "@/utils/apis/MahasiswaApi";
+  useMahasiswa,
+  useStoreMahasiswa,
+  useUpdateMahasiswa,
+  useDeleteMahasiswa,
+} from "../../utils/hooks/useMahasiswa.jsx";
+import { useMatkul } from "../../utils/hooks/useMatkul.jsx";
+import { useKelas } from "../../utils/hooks/useKelas.jsx";
 
 const DaftarMahasiswa = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -19,39 +20,57 @@ const DaftarMahasiswa = () => {
   const [modalContent, setModalContent] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedJurusan, setSelectedJurusan] = useState("");
-  const [ListMahasiswa, setListMahasiswa] = useState([]);
 
-  useEffect(() => {
-    fetchMahasiswa();
-  }, []);
+  const {
+    data: mahasiswa = [],
+    isLoading: isLoadingMahasiswa,
+    isError: isErrorMahasiswa,
+    error: errorMahasiswa,
+  } = useMahasiswa();
+  const {
+    data: kelas = [],
+    isLoading: isLoadingKelas,
+    isError: isErrorKelas,
+    error: errorKelas,
+  } = useKelas();
+  const {
+    data: mataKuliah = [],
+    isLoading: isLoadingMatkul,
+    isError: isErrorMatkul,
+    error: errorMatkul,
+  } = useMatkul();
 
-  const fetchMahasiswa = async () => {
-    try {
-      const res = await getAllMahasiswa();
-      setListMahasiswa(res.data);
-    } catch (err) {
-      console.error("Gagal fetch data:", err);
-    }
-  };
-
-  const handleSubmit = async (data) => {
-    // ....
-    confirmUpdate(() => {
-      updateMahasiswa(form.id, form);
-      // ....
-    });
-    // ....
-    storeMahasiswa(form);
-  };
+  const { mutate: storeMahasiswaMutate } = useStoreMahasiswa();
+  const { mutate: updateMahasiswaMutate } = useUpdateMahasiswa();
+  const { mutate: deleteMahasiswaMutate } = useDeleteMahasiswa();
 
   const openModal = (title, content) => {
-    console.log("Modal dibuka dengan title:", title);
     setModalTitle(title);
     setModalContent(content);
     setIsModalOpen(true);
   };
 
-  const handleDelete = (nim) => {
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setModalContent(null);
+    setModalTitle("");
+  };
+
+  const handleAddEditSubmit = (formData, isEdit) => {
+    if (isEdit) {
+      updateMahasiswaMutate({ id: formData.id, data: formData });
+    } else {
+      const exists = mahasiswa.find((m) => m.nim === formData.nim);
+      if (exists) {
+        toastError("NIM sudah terdaftar!");
+        return;
+      }
+      storeMahasiswaMutate(formData);
+    }
+    closeModal();
+  };
+
+  const handleDelete = (id) => {
     Swal.fire({
       title: "Apakah Anda yakin?",
       text: "Data ini akan dihapus secara permanen!",
@@ -62,15 +81,34 @@ const DaftarMahasiswa = () => {
       reverseButtons: true,
     }).then((result) => {
       if (result.isConfirmed) {
-        deleteMahasiswa(nim);
-        setListMahasiswa((prev) => prev.filter((mhs) => mhs.nim !== nim));
-        showSuccess();
+        deleteMahasiswaMutate(id);
       } else {
         showCanceled();
       }
     });
   };
-  const filteredMahasiswa = ListMahasiswa.filter((mhs) => {
+
+  const enrichedMahasiswa = mahasiswa.map((mhs) => {
+    const uniqueMatkulIds = new Set();
+
+    kelas.forEach((kls) => {
+      if (kls.mahasiswa_ids.includes(String(mhs.id))) {
+        uniqueMatkulIds.add(String(kls.mata_kuliah_id)); // Tambahkan ID mata kuliah ke Set
+      }
+    });
+
+    const matkulDiambil = Array.from(uniqueMatkulIds).map((matkulId) => {
+      const matkul = mataKuliah.find((mk) => String(mk.id) === matkulId);
+      return matkul ? matkul.nama : "Tidak Diketahui";
+    });
+
+    return {
+      ...mhs,
+      matkulDiambil: matkulDiambil,
+    };
+  });
+
+  const filteredMahasiswa = enrichedMahasiswa.filter((mhs) => {
     const matchesSearch =
       mhs.nama.toLowerCase().includes(searchTerm.toLowerCase()) ||
       mhs.nim.toLowerCase().includes(searchTerm.toLowerCase());
@@ -79,7 +117,30 @@ const DaftarMahasiswa = () => {
     return matchesSearch && matchesJurusan;
   });
 
-  const uniqueJurusan = [...new Set(ListMahasiswa.map((mhs) => mhs.jurusan))];
+  const uniqueJurusan = [
+    ...new Set(mahasiswa.map((mhs) => mhs.jurusan)),
+  ].sort();
+
+  if (isLoadingMahasiswa || isLoadingKelas || isLoadingMatkul) {
+    return (
+      <div className="flex-1 p-6 flex items-center justify-center">
+        <p className="text-gray-600">Memuat data...</p>
+      </div>
+    );
+  }
+
+  if (isErrorMahasiswa || isErrorKelas || isErrorMatkul) {
+    return (
+      <div className="flex-1 p-6 flex items-center justify-center text-red-500">
+        <p>
+          Error:{" "}
+          {errorMahasiswa?.message ||
+            errorKelas?.message ||
+            errorMatkul?.message}
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="flex-1 p-6 overflow-auto bg-gray-50">
@@ -125,10 +186,9 @@ const DaftarMahasiswa = () => {
                   "Tambah Mahasiswa",
                   <MahasiswaForm
                     uniqueJurusan={uniqueJurusan}
-                    onSubmit={(data) =>
-                      setListMahasiswa([...ListMahasiswa, data])
-                    }
-                    onCancel={() => setIsModalOpen(false)}
+                    onSubmit={(data) => handleAddEditSubmit(data, false)}
+                    onCancel={closeModal}
+                    mataKuliahOptions={mataKuliah}
                   />
                 )
               }
@@ -148,13 +208,15 @@ const DaftarMahasiswa = () => {
                 <th className="px-6 py-3">Nama</th>
                 <th className="px-6 py-3">Jurusan</th>
                 <th className="px-6 py-3">Status</th>
+                <th className="px-6 py-3">Mata Kuliah Diambil</th>{" "}
+                {/* Hanya satu kolom ini */}
                 <th className="px-6 py-3 text-right">Aksi</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {filteredMahasiswa.length > 0 ? (
                 filteredMahasiswa.map((mhs) => (
-                  <tr key={mhs.nim} className="hover:bg-gray-50">
+                  <tr key={mhs.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap font-medium">
                       {mhs.nim}
                     </td>
@@ -167,9 +229,10 @@ const DaftarMahasiswa = () => {
                           <div className="font-medium text-gray-900">
                             {mhs.nama}
                           </div>
-                          <div className="text-sm text-gray-500">
-                            {mhs.email}
-                          </div>
+                          {/* Anda bisa menambahkan email jika data mhs memiliki email */}
+                          {/* <div className="text-sm text-gray-500">
+                            {mhs.email || "-"}
+                          </div> */}
                         </div>
                       </div>
                     </td>
@@ -189,12 +252,29 @@ const DaftarMahasiswa = () => {
                         {mhs.status}
                       </span>
                     </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      {mhs.matkulDiambil && mhs.matkulDiambil.length > 0 ? (
+                        <ul className="list-disc list-inside">
+                          {mhs.matkulDiambil.map((mk, index) => (
+                            <li key={index}>{mk}</li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <span className="text-gray-500">
+                          Belum mengambil mata kuliah
+                        </span>
+                      )}
+                    </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <button
                         onClick={() =>
                           openModal(
                             "Detail Mahasiswa",
-                            <DetailMahasiswa mhs={mhs} />
+                            <DetailMahasiswa
+                              mhs={mhs}
+                              // Anda bisa menghapus prop kelasData jika DetailMahasiswa tidak membutuhkannya
+                              matkulData={mataKuliah}
+                            />
                           )
                         }
                         className="text-blue-600 hover:text-blue-900 mr-3"
@@ -208,21 +288,11 @@ const DaftarMahasiswa = () => {
                             <MahasiswaForm
                               initialData={mhs}
                               uniqueJurusan={uniqueJurusan}
-                              onSubmit={(data) => {
-                                setListMahasiswa((prev) =>
-                                  prev.map((m) =>
-                                    m.nim === data.nim ? data : m
-                                  )
-                                );
-                                closeModal();
-                              }}
-                              onDelete={(nim) => {
-                                setListMahasiswa((prev) =>
-                                  prev.filter((m) => m.nim !== nim)
-                                );
-                                closeModal();
-                              }}
-                              onCancel={setIsModalOpen(false)}
+                              onSubmit={(data) =>
+                                handleAddEditSubmit(data, true)
+                              }
+                              onCancel={closeModal}
+                              mataKuliahOptions={mataKuliah}
                             />
                           )
                         }
@@ -230,7 +300,10 @@ const DaftarMahasiswa = () => {
                       >
                         <FaEdit />
                       </button>
-                      <button onClick={() => handleDelete(mhs.nim)}>
+                      <button
+                        onClick={() => handleDelete(mhs.id)}
+                        className="text-red-600 hover:text-red-900"
+                      >
                         <FaTrash />
                       </button>
                     </td>
@@ -239,7 +312,7 @@ const DaftarMahasiswa = () => {
               ) : (
                 <tr>
                   <td
-                    colSpan="5"
+                    colSpan="6" // Sesuaikan colspan menjadi 6 (NIM, Nama, Jurusan, Status, Matkul, Aksi)
                     className="px-6 py-4 text-center text-gray-500"
                   >
                     Tidak ada data mahasiswa yang sesuai dengan pencarian
@@ -264,7 +337,7 @@ const DaftarMahasiswa = () => {
               <p className="text-sm text-gray-700">
                 Menampilkan{" "}
                 <span className="font-medium">{filteredMahasiswa.length}</span>{" "}
-                dari <span className="font-medium">{ListMahasiswa.length}</span>{" "}
+                dari <span className="font-medium">{mahasiswa.length}</span>{" "}
                 mahasiswa
               </p>
             </div>
@@ -288,11 +361,7 @@ const DaftarMahasiswa = () => {
         </div>
       </div>
 
-      <Modal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        title={modalTitle}
-      >
+      <Modal isOpen={isModalOpen} onClose={closeModal} title={modalTitle}>
         {modalContent}
       </Modal>
     </div>

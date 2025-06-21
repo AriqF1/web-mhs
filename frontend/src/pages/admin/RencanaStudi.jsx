@@ -177,7 +177,7 @@ const RencanaStudi = () => {
       await storeKelas({ ...form, mahasiswa_ids: [] });
       setIsModalOpen(false);
       toastSuccess("Kelas berhasil ditambahkan");
-      setForm({ mata_kuliah_id: "", dosen_id: "" }); // Reset form
+      setForm({ mata_kuliah_id: "", dosen_id: "" });
       fetchData();
     } catch (error) {
       toastError("Gagal menambahkan kelas.");
