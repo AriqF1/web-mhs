@@ -3,10 +3,14 @@ import { NavLink } from "react-router-dom";
 import {
   FaTachometerAlt,
   FaUserGraduate,
+  FaUniversity,
+  FaBook,
   FaChalkboardTeacher,
-  FaClipboardList,
+  FaTasks,
+  FaClipboardCheck,
   FaCog,
 } from "react-icons/fa";
+
 import { useAuthStateContext } from "../../../../AuthContext";
 
 const Sidebar = () => {
@@ -53,7 +57,7 @@ const Sidebar = () => {
           >
             <FaUserGraduate className="text-xl" />
             <span className="menu-text hidden lg:inline font-medium">
-              Daftar Mahasiswa
+              Mahasiswa
             </span>
           </NavLink>
         )}
@@ -67,9 +71,9 @@ const Sidebar = () => {
               }`
             }
           >
-            <FaClipboardList className="text-xl" />
+            <FaUniversity className="text-xl" />
             <span className="menu-text hidden lg:inline font-medium">
-              Daftar Prodi
+              Prodi
             </span>
           </NavLink>
         )}
@@ -84,9 +88,9 @@ const Sidebar = () => {
               }`
             }
           >
-            <FaClipboardList className="text-xl" />
+            <FaBook className="text-xl" />
             <span className="menu-text hidden lg:inline font-medium">
-              Daftar Matkul
+              Mata Kuliah
             </span>
           </NavLink>
         )}
@@ -102,7 +106,7 @@ const Sidebar = () => {
           >
             <FaChalkboardTeacher className="text-xl" />
             <span className="menu-text hidden lg:inline font-medium">
-              Daftar Dosen
+              Dosen
             </span>
           </NavLink>
         )}
@@ -116,7 +120,7 @@ const Sidebar = () => {
               }`
             }
           >
-            <FaChalkboardTeacher className="text-xl" />
+            <FaClipboardCheck className="text-xl" />
             <span className="menu-text hidden lg:inline font-medium">
               Rencana Studi
             </span>
