@@ -122,7 +122,7 @@ const Sidebar = () => {
           >
             <FaClipboardCheck className="text-xl" />
             <span className="menu-text hidden lg:inline font-medium">
-              Rencana Studi
+              Kelas
             </span>
           </NavLink>
         )}
