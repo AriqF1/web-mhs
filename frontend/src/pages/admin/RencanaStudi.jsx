@@ -205,10 +205,8 @@ const RencanaStudi = () => {
   return (
     <div className="flex-1 p-6 overflow-auto bg-gray-50">
       <div className="mb-6">
-        <h1 className="text-3xl font-extrabold text-gray-900">Rencana Studi</h1>
-        <p className="text-gray-600 mt-1">
-          Kelola rencana studi, kelas, dan penugasan dosen/mahasiswa di sini.
-        </p>
+        <h1 className="text-2xl font-bold text-gray-800">Rencana Studi</h1>
+        <p className="text-gray-600">Kelola Data Rencana Studi Dan Kelas</p>
       </div>
 
       <div className="bg-white shadow-xl rounded-lg p-6 mb-8">
@@ -231,7 +229,7 @@ const RencanaStudi = () => {
               name="mata_kuliah_id"
               value={form.mata_kuliah_id}
               onChange={handleChange}
-              className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md shadow-sm"
+              className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md shadow-sm cursor-pointer"
             >
               <option value="">Pilih Mata Kuliah</option>
               {mataKuliahBelumAdaKelas.map((mk) => (
@@ -258,7 +256,7 @@ const RencanaStudi = () => {
               name="dosen_id"
               value={form.dosen_id}
               onChange={handleChange}
-              className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md shadow-sm"
+              className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md shadow-sm cursor-pointer"
             >
               <option value="">Pilih Dosen</option>
               {dosen.map((d) => (
@@ -271,7 +269,7 @@ const RencanaStudi = () => {
           <div className="md:col-span-2 flex justify-end">
             <button
               type="submit"
-              className="inline-flex items-center px-6 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+              className="inline-flex items-center px-6 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 cursor-pointer"
             >
               <FaPlus className="mr-2 -ml-1" /> Tambah Kelas
             </button>
@@ -331,7 +329,7 @@ const RencanaStudi = () => {
                               [kls.id]: e.target.value,
                             }))
                           }
-                          className="block w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                          className="block w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 cursor-pointer"
                         >
                           {dosen.map((d) => (
                             <option key={d.id} value={d.id}>
@@ -341,7 +339,7 @@ const RencanaStudi = () => {
                         </select>
                         <button
                           onClick={() => handleChangeDosen(kls)}
-                          className="bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                          className="bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 cursor-pointer"
                           title="Ganti Dosen"
                         >
                           <FaEdit />
@@ -361,7 +359,7 @@ const RencanaStudi = () => {
                                 onClick={() =>
                                   handleDeleteMahasiswa(kls, mhsId)
                                 }
-                                className="text-red-500 hover:text-red-700 ml-2"
+                                className="text-red-500 hover:text-red-700 ml-2 cursor-pointer"
                                 title="Hapus Mahasiswa"
                               >
                                 <FaTrash className="inline" />
@@ -398,7 +396,7 @@ const RencanaStudi = () => {
                           onClick={() =>
                             handleAddMahasiswa(kls, selectedMhs[kls.id])
                           }
-                          className="bg-green-500 text-white p-2 rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                          className="bg-green-500 text-white p-2 rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 cursor-pointer"
                           title="Tambah Mahasiswa"
                         >
                           <FaUserPlus />
@@ -408,7 +406,7 @@ const RencanaStudi = () => {
                     <td className="px-6 py-4 whitespace-nowrap text-left text-sm font-medium">
                       <button
                         onClick={() => handleDeleteKelas(kls.id)}
-                        className="text-red-600 hover:text-red-900"
+                        className="text-red-600 hover:text-red-900 cursor-pointer"
                         title="Hapus Kelas"
                       >
                         <FaTrash />
