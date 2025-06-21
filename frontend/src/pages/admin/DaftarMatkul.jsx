@@ -1,36 +1,30 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Modal from "../components/organism/Modal.jsx";
 import { FaEdit, FaTrash, FaSearch, FaPlus, FaEye } from "react-icons/fa";
-// import MatakuliahForm from "../components/organism/MatakuliahForm.jsx";
+import MatkulForm from "../components/organism/MatkulForm.jsx";
 import DetailMatakuliah from "../components/organism/DetailMatakuliah.jsx";
-import { getAllMatkul } from "../../services/matkulService.js";
-import { showSuccess, showCanceled } from "../../utils/sweetAlert.js";
 import Swal from "sweetalert2";
+import { toastError, toastSuccess } from "../../utils/utility.jsx";
+import { toast } from "react-toastify";
+
+import {
+  useMatkul,
+  useStoreMatkul,
+  useUpdateMatkul,
+  useDeleteMatkul,
+} from "../../utils/hooks/useMatkul.jsx";
 
 const DaftarMatakuliah = () => {
-  const [isLoading, setIsLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalTitle, setModalTitle] = useState("");
   const [modalContent, setModalContent] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedJurusan, setSelectedJurusan] = useState("");
-  const [listMatakuliah, setListMatakuliah] = useState([]);
 
-  const fetchMatkul = async () => {
-    setIsLoading(true);
-    try {
-      const response = await getAllMatkul();
-      setListMatakuliah(response);
-    } catch (error) {
-      console.error("Gagal memuat data matakuliah:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const { data: listMatakuliah = [], isLoading, isError, error } = useMatkul();
 
-  useEffect(() => {
-    fetchMatkul();
-  }, []);
+  const { mutate: storeMatkulMutate } = useStoreMatkul();
+  const { mutate: updateMatkulMutate } = useUpdateMatkul();
+  const { mutate: deleteMatkulMutate } = useDeleteMatkul();
 
   const openModal = (title, content) => {
     setModalTitle(title);
@@ -42,7 +36,24 @@ const DaftarMatakuliah = () => {
     setIsModalOpen(false);
     setModalContent(null);
     setModalTitle("");
-    fetchMatkul();
+  };
+
+  const handleAddEditSubmit = (formData, isEdit) => {
+    if (isEdit) {
+      updateMatkulMutate({ id: formData.id, data: formData });
+    } else {
+      const exists = listMatakuliah.find(
+        (mk) =>
+          mk.nama.toLowerCase() === formData.nama.toLowerCase() ||
+          String(mk.id) === String(formData.id)
+      );
+      if (exists) {
+        toastError("Mata kuliah dengan nama atau ID tersebut sudah terdaftar!");
+        return;
+      }
+      storeMatkulMutate(formData);
+    }
+    closeModal();
   };
 
   const handleDelete = (id) => {
@@ -54,10 +65,9 @@ const DaftarMatakuliah = () => {
       confirmButtonText: "Hapus",
       cancelButtonText: "Batal",
       reverseButtons: true,
-    }).then(async (result) => {
+    }).then((result) => {
       if (result.isConfirmed) {
-        showSuccess("Matakuliah berhasil dihapus!");
-        fetchMatkul();
+        deleteMatkulMutate(id);
       } else {
         showCanceled();
       }
@@ -66,16 +76,28 @@ const DaftarMatakuliah = () => {
 
   const filteredMatakuliah = listMatakuliah.filter((mk) => {
     const matchesSearch =
-      mk.nama_matakuliah.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      mk.kode_matakuliah.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesJurusan =
-      selectedJurusan === "" || mk.jurusan === selectedJurusan;
-    return matchesSearch && matchesJurusan;
+      (mk.nama && mk.nama.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (mk.id && String(mk.id).toLowerCase().includes(searchTerm.toLowerCase()));
+    return matchesSearch;
   });
 
-  const uniqueJurusan = [
-    ...new Set(listMatakuliah.map((mk) => mk.jurusan).filter(Boolean)),
-  ];
+  const uniqueJurusan = [];
+
+  if (isLoading) {
+    return (
+      <div className="flex-1 p-6 flex items-center justify-center">
+        <p className="text-gray-600">Memuat data mata kuliah...</p>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="flex-1 p-6 flex items-center justify-center text-red-500">
+        <p>Error: {error?.message || "Terjadi kesalahan saat memuat data."}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="flex-1 p-6 overflow-auto bg-gray-50">
@@ -94,32 +116,21 @@ const DaftarMatakuliah = () => {
                 </div>
                 <input
                   type="text"
-                  placeholder="Cari kode atau nama matakuliah..."
+                  placeholder="Cari ID atau nama matakuliah..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md text-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
-              <select
-                value={selectedJurusan}
-                onChange={(e) => setSelectedJurusan(e.target.value)}
-                className="block w-full md:w-48 px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              >
-                <option value="">Semua Jurusan</option>
-                {uniqueJurusan.map((jurusan) => (
-                  <option key={jurusan} value={jurusan}>
-                    {jurusan}
-                  </option>
-                ))}
-              </select>
             </div>
             <button
               onClick={() =>
                 openModal(
                   "Tambah Matakuliah",
-                  <MatakuliahForm
-                    uniqueJurusan={uniqueJurusan}
-                    onSubmit={closeModal} // Close and refresh after submission
+                  <MatkulForm
+                    onSubmit={(data, isEditMode) =>
+                      handleAddEditSubmit(data, isEditMode)
+                    }
                     onCancel={closeModal}
                   />
                 )
@@ -136,10 +147,9 @@ const DaftarMatakuliah = () => {
           <table className="w-full">
             <thead>
               <tr className="bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                <th className="px-6 py-3">Kode Matakuliah</th>
+                <th className="px-6 py-3">ID Matakuliah</th>
                 <th className="px-6 py-3">Nama Matakuliah</th>
                 <th className="px-6 py-3">SKS</th>
-                <th className="px-6 py-3">Jurusan</th>
                 <th className="px-6 py-3 text-right">Aksi</th>
               </tr>
             </thead>
@@ -148,17 +158,21 @@ const DaftarMatakuliah = () => {
                 filteredMatakuliah.map((mk) => (
                   <tr key={mk.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap font-medium">
-                      {mk.kode_matakuliah}
+                      {mk.id}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="font-medium text-gray-900">
-                        {mk.nama_matakuliah}
+                      <div className="flex items-center">
+                        <div className="w-8 h-8 mr-3 bg-blue-100 text-blue-800 rounded-full flex items-center justify-center font-semibold text-sm">
+                          {mk.nama.charAt(0)}
+                        </div>
+                        <div>
+                          <div className="font-medium text-gray-900">
+                            {mk.nama}
+                          </div>
+                        </div>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">{mk.sks}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      {mk.jurusan || "-"}
-                    </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <button
                         onClick={() =>
@@ -175,10 +189,11 @@ const DaftarMatakuliah = () => {
                         onClick={() =>
                           openModal(
                             "Edit Matakuliah",
-                            <MatakuliahForm
+                            <MatkulForm
                               initialData={mk}
-                              uniqueJurusan={uniqueJurusan}
-                              onSubmit={closeModal}
+                              onSubmit={(data, isEditMode) =>
+                                handleAddEditSubmit(data, isEditMode)
+                              }
                               onCancel={closeModal}
                             />
                           )
@@ -199,7 +214,7 @@ const DaftarMatakuliah = () => {
               ) : (
                 <tr>
                   <td
-                    colSpan="5"
+                    colSpan="4"
                     className="px-6 py-4 text-center text-gray-500"
                   >
                     Tidak ada data matakuliah yang sesuai dengan pencarian
@@ -234,7 +249,6 @@ const DaftarMatakuliah = () => {
                 className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px"
                 aria-label="Pagination"
               >
-                {/* Pagination is simplified for this example, integrate your actual pagination logic */}
                 <button className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
                   &laquo; Previous
                 </button>
