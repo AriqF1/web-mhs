@@ -209,7 +209,6 @@ const DaftarMahasiswa = () => {
                 <th className="px-6 py-3">Jurusan</th>
                 <th className="px-6 py-3">Status</th>
                 <th className="px-6 py-3">Mata Kuliah Diambil</th>{" "}
-                {/* Hanya satu kolom ini */}
                 <th className="px-6 py-3 text-right">Aksi</th>
               </tr>
             </thead>
@@ -229,10 +228,6 @@ const DaftarMahasiswa = () => {
                           <div className="font-medium text-gray-900">
                             {mhs.nama}
                           </div>
-                          {/* Anda bisa menambahkan email jika data mhs memiliki email */}
-                          {/* <div className="text-sm text-gray-500">
-                            {mhs.email || "-"}
-                          </div> */}
                         </div>
                       </div>
                     </td>
@@ -272,7 +267,6 @@ const DaftarMahasiswa = () => {
                             "Detail Mahasiswa",
                             <DetailMahasiswa
                               mhs={mhs}
-                              // Anda bisa menghapus prop kelasData jika DetailMahasiswa tidak membutuhkannya
                               matkulData={mataKuliah}
                             />
                           )
@@ -312,7 +306,7 @@ const DaftarMahasiswa = () => {
               ) : (
                 <tr>
                   <td
-                    colSpan="6" // Sesuaikan colspan menjadi 6 (NIM, Nama, Jurusan, Status, Matkul, Aksi)
+                    colSpan="6"
                     className="px-6 py-4 text-center text-gray-500"
                   >
                     Tidak ada data mahasiswa yang sesuai dengan pencarian
