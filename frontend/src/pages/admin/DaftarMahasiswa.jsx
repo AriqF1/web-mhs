@@ -93,7 +93,7 @@ const DaftarMahasiswa = () => {
 
     kelas.forEach((kls) => {
       if (kls.mahasiswa_ids.includes(String(mhs.id))) {
-        uniqueMatkulIds.add(String(kls.mata_kuliah_id)); // Tambahkan ID mata kuliah ke Set
+        uniqueMatkulIds.add(String(kls.mata_kuliah_id));
       }
     });
 
