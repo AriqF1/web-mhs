@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo, useEffect } from "react"; // 1. Import useEffect
 import Modal from "../components/organism/Modal.jsx";
 import { FaEdit, FaTrash, FaSearch, FaUserPlus, FaEye } from "react-icons/fa";
 import MahasiswaForm from "../components/organism/MahasiswaForm.jsx";
@@ -13,20 +13,44 @@ import {
 } from "../../utils/hooks/useMahasiswa.jsx";
 import { useMatkul } from "../../utils/hooks/useMatkul.jsx";
 import { useKelas } from "../../utils/hooks/useKelas.jsx";
+import { useDebounce } from "../../utils/hooks/useDebounce.jsx";
 
 const DaftarMahasiswa = () => {
+  // State untuk Modal
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalTitle, setModalTitle] = useState("");
   const [modalContent, setModalContent] = useState(null);
+
+  // State untuk parameter query API
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(5);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedJurusan, setSelectedJurusan] = useState("");
 
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
+
+  // 2. BUG FIX: Reset ke halaman 1 setiap kali filter/pencarian berubah
+  useEffect(() => {
+    setPage(1);
+  }, [debouncedSearchTerm, selectedJurusan]);
+
+  // Mengambil data mahasiswa. Pastikan backend mendukung semua parameter ini.
   const {
-    data: mahasiswa = [],
+    data: result,
     isLoading: isLoadingMahasiswa,
     isError: isErrorMahasiswa,
     error: errorMahasiswa,
-  } = useMahasiswa();
+    isPreviousData,
+  } = useMahasiswa({
+    q: debouncedSearchTerm, // Backend harus bisa handle 'q' untuk search
+    jurusan: selectedJurusan || undefined, // Backend harus bisa handle 'jurusan'
+    _sort: "nama",
+    _order: "asc",
+    _page: page,
+    _limit: limit,
+  });
+
+  // Mengambil data pendukung
   const {
     data: kelas = [],
     isLoading: isLoadingKelas,
@@ -40,31 +64,33 @@ const DaftarMahasiswa = () => {
     error: errorMatkul,
   } = useMatkul();
 
+  const mahasiswa = result?.data ?? [];
+  const totalCount = result?.total ?? 0;
+  const totalPages = Math.ceil(totalCount / limit);
+
+  // Mutations
   const { mutate: storeMahasiswaMutate } = useStoreMahasiswa();
   const { mutate: updateMahasiswaMutate } = useUpdateMahasiswa();
   const { mutate: deleteMahasiswaMutate } = useDeleteMahasiswa();
+
+  const handlePrevPage = () => setPage((prev) => Math.max(prev - 1, 1));
+  const handleNextPage = () => {
+    if (!isPreviousData && page < totalPages) {
+      setPage((prev) => prev + 1);
+    }
+  };
 
   const openModal = (title, content) => {
     setModalTitle(title);
     setModalContent(content);
     setIsModalOpen(true);
   };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-    setModalContent(null);
-    setModalTitle("");
-  };
+  const closeModal = () => setIsModalOpen(false);
 
   const handleAddEditSubmit = (formData, isEdit) => {
     if (isEdit) {
       updateMahasiswaMutate({ id: formData.id, data: formData });
     } else {
-      const exists = mahasiswa.find((m) => m.nim === formData.nim);
-      if (exists) {
-        toastError("NIM sudah terdaftar!");
-        return;
-      }
       storeMahasiswaMutate(formData);
     }
     closeModal();
@@ -76,55 +102,53 @@ const DaftarMahasiswa = () => {
       text: "Data ini akan dihapus secara permanen!",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonText: "Hapus",
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Ya, hapus!",
       cancelButtonText: "Batal",
-      reverseButtons: true,
     }).then((result) => {
       if (result.isConfirmed) {
         deleteMahasiswaMutate(id);
-      } else {
-        showCanceled();
       }
     });
   };
 
-  const enrichedMahasiswa = mahasiswa.map((mhs) => {
-    const uniqueMatkulIds = new Set();
+  const enrichedMahasiswa = useMemo(() => {
+    if (!mahasiswa.length || !kelas.length || !mataKuliah.length) return [];
 
-    kelas.forEach((kls) => {
-      if (kls.mahasiswa_ids.includes(String(mhs.id))) {
-        uniqueMatkulIds.add(String(kls.mata_kuliah_id));
-      }
+    return mahasiswa.map((mhs) => {
+      const uniqueMatkulIds = new Set();
+      kelas.forEach((kls) => {
+        if (kls.mahasiswa_ids.includes(String(mhs.id))) {
+          uniqueMatkulIds.add(String(kls.mata_kuliah_id));
+        }
+      });
+      const matkulDiambil = Array.from(uniqueMatkulIds).map((matkulId) => {
+        const matkul = mataKuliah.find((mk) => String(mk.id) === matkulId);
+        return matkul ? matkul.nama : "Tidak Diketahui";
+      });
+      return { ...mhs, matkulDiambil };
     });
+  }, [mahasiswa, kelas, mataKuliah]);
 
-    const matkulDiambil = Array.from(uniqueMatkulIds).map((matkulId) => {
-      const matkul = mataKuliah.find((mk) => String(mk.id) === matkulId);
-      return matkul ? matkul.nama : "Tidak Diketahui";
-    });
+  const { data: allMahasiswaForJurusan } = useMahasiswa({ _limit: 1000 });
+  const uniqueJurusan = useMemo(
+    () =>
+      [
+        ...new Set(
+          (allMahasiswaForJurusan?.data ?? []).map((mhs) => mhs.jurusan)
+        ),
+      ].sort(),
+    [allMahasiswaForJurusan]
+  );
 
-    return {
-      ...mhs,
-      matkulDiambil: matkulDiambil,
-    };
-  });
+  const isInitialLoading =
+    isLoadingMahasiswa || isLoadingKelas || isLoadingMatkul;
 
-  const filteredMahasiswa = enrichedMahasiswa.filter((mhs) => {
-    const matchesSearch =
-      mhs.nama.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      mhs.nim.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesJurusan =
-      selectedJurusan === "" || mhs.jurusan === selectedJurusan;
-    return matchesSearch && matchesJurusan;
-  });
-
-  const uniqueJurusan = [
-    ...new Set(mahasiswa.map((mhs) => mhs.jurusan)),
-  ].sort();
-
-  if (isLoadingMahasiswa || isLoadingKelas || isLoadingMatkul) {
+  if (isInitialLoading && !result) {
     return (
       <div className="flex-1 p-6 flex items-center justify-center">
-        <p className="text-gray-600">Memuat data...</p>
+        <p className="text-gray-600 text-lg">Memuat data...</p>
       </div>
     );
   }
@@ -153,23 +177,24 @@ const DaftarMahasiswa = () => {
 
       <div className="bg-white shadow rounded-lg overflow-hidden">
         <div className="p-6 border-b border-gray-200">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-3 md:space-y-0">
-            <div className="flex-1 flex space-x-2">
-              <div className="relative flex-1">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <FaSearch className="text-gray-400" />
-                </div>
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div className="flex-1 flex items-center gap-2">
+              <div className="relative flex-grow">
+                <FaSearch className="text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
                 <input
                   type="text"
                   placeholder="Cari NIM atau nama..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md text-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
               <select
                 value={selectedJurusan}
-                onChange={(e) => setSelectedJurusan(e.target.value)}
+                onChange={(e) => {
+                  setSelectedJurusan(e.target.value);
+                  // setPage(1) sekarang ditangani oleh useEffect
+                }}
                 className="block w-full md:w-48 px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               >
                 <option value="">Semua Jurusan</option>
@@ -185,14 +210,14 @@ const DaftarMahasiswa = () => {
                 openModal(
                   "Tambah Mahasiswa",
                   <MahasiswaForm
-                    uniqueJurusan={uniqueJurusan}
                     onSubmit={(data) => handleAddEditSubmit(data, false)}
                     onCancel={closeModal}
+                    uniqueJurusan={uniqueJurusan}
                     mataKuliahOptions={mataKuliah}
                   />
                 )
               }
-              className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center justify-center"
+              className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center justify-center whitespace-nowrap"
             >
               <FaUserPlus className="mr-2" />
               Tambah Mahasiswa
@@ -208,15 +233,18 @@ const DaftarMahasiswa = () => {
                 <th className="px-6 py-3">Nama</th>
                 <th className="px-6 py-3">Jurusan</th>
                 <th className="px-6 py-3">Status</th>
-                <th className="px-6 py-3">Mata Kuliah Diambil</th>{" "}
+                <th className="px-6 py-3">Mata Kuliah Diambil</th>
                 <th className="px-6 py-3 text-right">Aksi</th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {filteredMahasiswa.length > 0 ? (
-                filteredMahasiswa.map((mhs) => (
+            <tbody
+              className="bg-white divide-y divide-gray-200"
+              style={{ opacity: isPreviousData ? 0.7 : 1 }}
+            >
+              {enrichedMahasiswa.length > 0 ? (
+                enrichedMahasiswa.map((mhs) => (
                   <tr key={mhs.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap font-medium">
+                    <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">
                       {mhs.nim}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -224,19 +252,17 @@ const DaftarMahasiswa = () => {
                         <div className="w-8 h-8 mr-3 bg-blue-100 text-blue-800 rounded-full flex items-center justify-center font-semibold">
                           {mhs.nama.charAt(0)}
                         </div>
-                        <div>
-                          <div className="font-medium text-gray-900">
-                            {mhs.nama}
-                          </div>
+                        <div className="font-medium text-gray-900">
+                          {mhs.nama}
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-6 py-4 whitespace-nowrap text-gray-600">
                       {mhs.jurusan}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span
-                        className={`px-2 py-1 text-xs rounded-full ${
+                        className={`px-2 py-1 text-xs font-semibold rounded-full ${
                           mhs.status === "Aktif"
                             ? "bg-green-100 text-green-800"
                             : mhs.status === "Cuti"
@@ -247,17 +273,15 @@ const DaftarMahasiswa = () => {
                         {mhs.status}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                       {mhs.matkulDiambil && mhs.matkulDiambil.length > 0 ? (
-                        <ul className="list-disc list-inside">
+                        <ul className="list-disc list-inside space-y-1">
                           {mhs.matkulDiambil.map((mk, index) => (
                             <li key={index}>{mk}</li>
                           ))}
                         </ul>
                       ) : (
-                        <span className="text-gray-500">
-                          Belum mengambil mata kuliah
-                        </span>
+                        <span className="text-gray-500">Belum ada</span>
                       )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -272,6 +296,7 @@ const DaftarMahasiswa = () => {
                           )
                         }
                         className="text-blue-600 hover:text-blue-900 mr-3"
+                        title="Lihat Detail"
                       >
                         <FaEye />
                       </button>
@@ -291,12 +316,14 @@ const DaftarMahasiswa = () => {
                           )
                         }
                         className="text-yellow-600 hover:text-yellow-900 mr-3"
+                        title="Edit"
                       >
                         <FaEdit />
                       </button>
                       <button
                         onClick={() => handleDelete(mhs.id)}
                         className="text-red-600 hover:text-red-900"
+                        title="Hapus"
                       >
                         <FaTrash />
                       </button>
@@ -307,9 +334,11 @@ const DaftarMahasiswa = () => {
                 <tr>
                   <td
                     colSpan="6"
-                    className="px-6 py-4 text-center text-gray-500"
+                    className="px-6 py-10 text-center text-gray-500"
                   >
-                    Tidak ada data mahasiswa yang sesuai dengan pencarian
+                    {debouncedSearchTerm || selectedJurusan
+                      ? "Tidak ada mahasiswa yang cocok dengan kriteria."
+                      : "Tidak ada data mahasiswa."}
                   </td>
                 </tr>
               )}
@@ -319,10 +348,18 @@ const DaftarMahasiswa = () => {
 
         <div className="bg-white px-4 py-3 border-t border-gray-200 flex items-center justify-between">
           <div className="flex-1 flex justify-between sm:hidden">
-            <button className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+            <button
+              onClick={handlePrevPage}
+              disabled={page === 1}
+              className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
               Previous
             </button>
-            <button className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+            <button
+              onClick={handleNextPage}
+              disabled={page >= totalPages || isPreviousData}
+              className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
               Next
             </button>
           </div>
@@ -330,9 +367,14 @@ const DaftarMahasiswa = () => {
             <div>
               <p className="text-sm text-gray-700">
                 Menampilkan{" "}
-                <span className="font-medium">{filteredMahasiswa.length}</span>{" "}
-                dari <span className="font-medium">{mahasiswa.length}</span>{" "}
-                mahasiswa
+                <span className="font-medium">
+                  {totalCount > 0 ? (page - 1) * limit + 1 : 0}
+                </span>{" "}
+                sampai{" "}
+                <span className="font-medium">
+                  {Math.min(page * limit, totalCount)}
+                </span>{" "}
+                dari <span className="font-medium">{totalCount}</span> hasil
               </p>
             </div>
             <div>
@@ -340,14 +382,22 @@ const DaftarMahasiswa = () => {
                 className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px"
                 aria-label="Pagination"
               >
-                <button className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
-                  &laquo; Previous
+                <button
+                  onClick={handlePrevPage}
+                  disabled={page === 1}
+                  className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  &laquo;
                 </button>
-                <button className="bg-blue-50 border-blue-500 text-blue-600 relative inline-flex items-center px-4 py-2 border text-sm font-medium">
-                  1
-                </button>
-                <button className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
-                  Next &raquo;
+                <span className="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700">
+                  Halaman {page} / {totalPages || 1}
+                </span>
+                <button
+                  onClick={handleNextPage}
+                  disabled={page >= totalPages || isPreviousData}
+                  className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  &raquo;
                 </button>
               </nav>
             </div>

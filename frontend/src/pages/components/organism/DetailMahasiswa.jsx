@@ -10,9 +10,7 @@ const DetailMahasiswa = ({ mhs }) => (
     <div className="grid grid-cols-2 gap-4">
       <LabelValue label="NIM" value={mhs.nim} />
       <LabelValue label="Nama" value={mhs.nama} />
-      <LabelValue label="Email" value={mhs.email} />
       <LabelValue label="Jurusan" value={mhs.jurusan} />
-      <LabelValue label="Angkatan" value={mhs.angkatan} />
       <div>
         <h4 className="text-sm font-medium text-gray-500">Status</h4>
         <StatusBadge status={mhs.status} />

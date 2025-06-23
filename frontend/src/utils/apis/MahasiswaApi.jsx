@@ -1,7 +1,8 @@
 import axios from "@/utils/AxiosInstance";
 
 // Ambil semua mahasiswa
-export const getAllMahasiswa = () => axios.get("/mahasiswa");
+export const getAllMahasiswa = (params = {}) =>
+  axios.get("/mahasiswa", { params });
 
 // Ambil 1 mahasiswa
 export const getMahasiswa = (id) => axios.get(`/mahasiswa/${id}`);
