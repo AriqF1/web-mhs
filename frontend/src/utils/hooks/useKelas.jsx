@@ -1,4 +1,4 @@
-// Utils/Hooks/useKelas.jsx
+// Utils/ooks/useKelas.jsx
 import { useQuery } from "@tanstack/react-query";
 import { getAllKelas } from "../apis/KelasApi";
 
