@@ -1,4 +1,105 @@
 {
+  "chart": {
+    "students": [
+      {
+        "id": 1,
+        "faculty": "Teknik",
+        "count": 320
+      },
+      {
+        "id": 2,
+        "faculty": "Ekonomi",
+        "count": 210
+      },
+      {
+        "id": 3,
+        "faculty": "Kedokteran",
+        "count": 150
+      },
+      {
+        "id": 4,
+        "faculty": "Hukum",
+        "count": 180
+      },
+      {
+        "id": 5,
+        "faculty": "Ilmu Komputer",
+        "count": 260
+      }
+    ],
+    "genderRatio": [
+      {
+        "id": 1,
+        "gender": "Laki-laki",
+        "count": 600
+      },
+      {
+        "id": 2,
+        "gender": "Perempuan",
+        "count": 700
+      }
+    ],
+    "registrations": [
+      {
+        "id": 1,
+        "year": 2020,
+        "total": 500
+      },
+      {
+        "id": 2,
+        "year": 2021,
+        "total": 580
+      },
+      {
+        "id": 3,
+        "year": 2022,
+        "total": 640
+      },
+      {
+        "id": 4,
+        "year": 2023,
+        "total": 710
+      }
+    ],
+    "gradeDistribution": [
+      {
+        "subject": "TI",
+        "A": 120,
+        "B": 80,
+        "C": 40
+      },
+      {
+        "subject": "SI",
+        "A": 100,
+        "B": 90,
+        "C": 50
+      },
+      {
+        "subject": "MI",
+        "A": 110,
+        "B": 85,
+        "C": 30
+      }
+    ],
+    "lecturerRanks": [
+      {
+        "rank": "Asisten Ahli",
+        "count": 30
+      },
+      {
+        "rank": "Lektor",
+        "count": 50
+      },
+      {
+        "rank": "Lektor Kepala",
+        "count": 40
+      },
+      {
+        "rank": "Guru Besar",
+        "count": 10
+      }
+    ]
+  },
   "dosen": [
     {
       "id": "1",
@@ -76,56 +177,31 @@
       "id": "1",
       "mata_kuliah_id": "1",
       "dosen_id": "1",
-      "mahasiswa_ids": [
-        "1",
-        "2",
-        "3",
-        "4",
-        "5"
-      ]
+      "mahasiswa_ids": ["1", "2", "3", "4", "5"]
     },
     {
       "id": "2",
       "mata_kuliah_id": "2",
       "dosen_id": "2",
-      "mahasiswa_ids": [
-        "6",
-        "7",
-        "8"
-      ]
+      "mahasiswa_ids": ["6", "7", "8"]
     },
     {
       "id": "3",
       "mata_kuliah_id": "3",
       "dosen_id": "3",
-      "mahasiswa_ids": [
-        "1",
-        "4",
-        "6",
-        "9"
-      ]
+      "mahasiswa_ids": ["1", "4", "6", "9"]
     },
     {
       "id": "4",
       "mata_kuliah_id": "4",
       "dosen_id": "4",
-      "mahasiswa_ids": [
-        "2",
-        "5",
-        "7",
-        "10"
-      ]
+      "mahasiswa_ids": ["2", "5", "7", "10"]
     },
     {
       "id": "5",
       "mata_kuliah_id": "5",
       "dosen_id": "5",
-      "mahasiswa_ids": [
-        "3",
-        "8",
-        "9",
-        "10"
-      ]
+      "mahasiswa_ids": ["3", "8", "9", "10"]
     }
   ],
   "mahasiswa": [
@@ -292,10 +368,7 @@
       "email": "mahasiswa@mail.com",
       "password": "mahasiswa123",
       "role": "mahasiswa",
-      "permission": [
-        "krs.page",
-        "krs.read"
-      ]
+      "permission": ["krs.page", "krs.read"]
     }
   ]
 }
