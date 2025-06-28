@@ -1,0 +1,30 @@
+{
+  "students": [
+    { "id": 1, "faculty": "Teknik", "count": 320 },
+    { "id": 2, "faculty": "Ekonomi", "count": 210 },
+    { "id": 3, "faculty": "Kedokteran", "count": 150 },
+    { "id": 4, "faculty": "Hukum", "count": 180 },
+    { "id": 5, "faculty": "Ilmu Komputer", "count": 260 }
+  ],
+  "genderRatio": [
+    { "id": 1, "gender": "Laki-laki", "count": 600 },
+    { "id": 2, "gender": "Perempuan", "count": 700 }
+  ],
+  "registrations": [
+    { "id": 1, "year": 2020, "total": 500 },
+    { "id": 2, "year": 2021, "total": 580 },
+    { "id": 3, "year": 2022, "total": 640 },
+    { "id": 4, "year": 2023, "total": 710 }
+  ],
+  "gradeDistribution": [
+    { "subject": "TI", "A": 120, "B": 80, "C": 40 },
+    { "subject": "SI", "A": 100, "B": 90, "C": 50 },
+    { "subject": "MI", "A": 110, "B": 85, "C": 30 }
+  ],
+  "lecturerRanks": [
+    { "rank": "Asisten Ahli", "count": 30 },
+    { "rank": "Lektor", "count": 50 },
+    { "rank": "Lektor Kepala", "count": 40 },
+    { "rank": "Guru Besar", "count": 10 }
+  ]
+}
