@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from "react"; // 1. Import useEffect
+import React, { useState, useMemo, useEffect } from "react";
 import Modal from "../components/organism/Modal.jsx";
 import { FaEdit, FaTrash, FaSearch, FaUserPlus, FaEye } from "react-icons/fa";
 import MahasiswaForm from "../components/organism/MahasiswaForm.jsx";
@@ -16,12 +16,10 @@ import { useKelas } from "../../utils/hooks/useKelas.jsx";
 import { useDebounce } from "../../utils/hooks/useDebounce.jsx";
 
 const DaftarMahasiswa = () => {
-  // State untuk Modal
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalTitle, setModalTitle] = useState("");
   const [modalContent, setModalContent] = useState(null);
 
-  // State untuk parameter query API
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(5);
   const [searchTerm, setSearchTerm] = useState("");
@@ -29,12 +27,10 @@ const DaftarMahasiswa = () => {
 
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
-  // 2. BUG FIX: Reset ke halaman 1 setiap kali filter/pencarian berubah
   useEffect(() => {
     setPage(1);
   }, [debouncedSearchTerm, selectedJurusan]);
 
-  // Mengambil data mahasiswa. Pastikan backend mendukung semua parameter ini.
   const {
     data: result,
     isLoading: isLoadingMahasiswa,
@@ -42,15 +38,14 @@ const DaftarMahasiswa = () => {
     error: errorMahasiswa,
     isPreviousData,
   } = useMahasiswa({
-    q: debouncedSearchTerm, // Backend harus bisa handle 'q' untuk search
-    jurusan: selectedJurusan || undefined, // Backend harus bisa handle 'jurusan'
+    q: debouncedSearchTerm,
+    jurusan: selectedJurusan || undefined,
     _sort: "nama",
     _order: "asc",
     _page: page,
     _limit: limit,
   });
 
-  // Mengambil data pendukung
   const {
     data: kelas = [],
     isLoading: isLoadingKelas,
@@ -68,7 +63,6 @@ const DaftarMahasiswa = () => {
   const totalCount = result?.total ?? 0;
   const totalPages = Math.ceil(totalCount / limit);
 
-  // Mutations
   const { mutate: storeMahasiswaMutate } = useStoreMahasiswa();
   const { mutate: updateMahasiswaMutate } = useUpdateMahasiswa();
   const { mutate: deleteMahasiswaMutate } = useDeleteMahasiswa();
@@ -193,7 +187,6 @@ const DaftarMahasiswa = () => {
                 value={selectedJurusan}
                 onChange={(e) => {
                   setSelectedJurusan(e.target.value);
-                  // setPage(1) sekarang ditangani oleh useEffect
                 }}
                 className="block w-full md:w-48 px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               >
